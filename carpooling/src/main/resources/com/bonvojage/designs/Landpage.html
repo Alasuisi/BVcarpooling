@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="UTF-8" name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;bvtheme&quot;}">
+  <meta charset="UTF-8" name="vaadin-version" content="7.7.0">
+ </head> 
+ <body> 
+  <vaadin-vertical-layout> 
+   <vaadin-vertical-layout responsive _id="topLayout" :center :expand="20"> 
+    <vaadin-horizontal-layout> 
+     <vaadin-image source="http://bonvoyage2020.eu/wp-content/uploads/bvg-logo-sm.png" _id="mainLogo"></vaadin-image> 
+     <vaadin-label style-name="colored h1" size-auto plain-text _id="titleLable" :bottom>
+       Here, should be the title 
+     </vaadin-label> 
+    </vaadin-horizontal-layout> 
+   </vaadin-vertical-layout> 
+   <vaadin-vertical-layout responsive immediate _id="midLayout" :expand="60"> 
+    <vaadin-horizontal-split-panel style-name="button_blue danger" responsive immediate value="UserHistory:" split-position="30%" _id="midSplitLayout"> 
+     <vaadin-vertical-layout responsive immediate _id="leftSplitVertical"> 
+      <vaadin-label size-auto plain-text _id="userLabel" :center>
+        Welcome user 
+      </vaadin-label> 
+      <vaadin-image source="http://vacat.io/data/user/avatar.png" width="120px" height="120px" _id="userLogo" :center></vaadin-image> 
+      <vaadin-label size-auto plain-text _id="historyLabel">
+        UserHistory: 
+      </vaadin-label> 
+      <vaadin-table selectable width-full _id="userHistory"> 
+       <table> 
+        <colgroup> 
+         <col property-id="Trip"> 
+         <col property-id="Date"> 
+        </colgroup> 
+        <tbody> 
+         <tr item-id="1"> 
+          <td>Customer Project 1</td> 
+          <td>OK</td> 
+         </tr> 
+         <tr item-id="2"> 
+          <td>Customer Project 2</td> 
+          <td>OK</td> 
+         </tr> 
+         <tr item-id="3"> 
+          <td>Customer Project 3</td> 
+          <td>OK</td> 
+         </tr> 
+         <tr item-id="4"> 
+          <td>Customer Project 4</td> 
+          <td>OK</td> 
+         </tr> 
+         <tr item-id="5"> 
+          <td>Customer Project 5</td> 
+          <td>OK</td> 
+         </tr> 
+         <tr item-id="6"> 
+          <td>Customer Project 6</td> 
+          <td>OK</td> 
+         </tr> 
+         <tr item-id="7"> 
+          <td>Customer Project 7</td> 
+          <td>OK</td> 
+         </tr> 
+         <tr item-id="8"> 
+          <td>Customer Project 8</td> 
+          <td>OK</td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </vaadin-table> 
+     </vaadin-vertical-layout> 
+     <vaadin-vertical-layout margin _id="rightSplitVertical"> 
+      <vaadin-horizontal-layout width-full _id="buttonsLayout"> 
+       <vaadin-button style-name="button_blue" plain-text _id="offerRideBtn" :middle :center>
+         Offer Ride 
+       </vaadin-button> 
+       <vaadin-button style-name="button_blue" plain-text _id="searchRideBtn" :middle :center>
+         Search Ride 
+       </vaadin-button> 
+      </vaadin-horizontal-layout> 
+     </vaadin-vertical-layout> 
+    </vaadin-horizontal-split-panel> 
+   </vaadin-vertical-layout> 
+   <vaadin-vertical-layout _id="bottomLayout" :expand="20"></vaadin-vertical-layout> 
+  </vaadin-vertical-layout>  
+ </body>
+</html>
