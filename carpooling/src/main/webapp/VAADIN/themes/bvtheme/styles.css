@@ -12969,7 +12969,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .bvtheme .button_blue {
-	border-top-color: blue;
-	border-bottom-color: red;
-	border-right-color: limegreen;
+	border-top-color: #2C82EE;
+	border-bottom-color: #EE4F83;
+	border-right-color: #38DD7C;
 }

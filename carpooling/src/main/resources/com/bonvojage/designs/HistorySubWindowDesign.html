@@ -5,30 +5,41 @@
   <meta charset="UTF-8" name="vaadin-version" content="7.7.0">
  </head> 
  <body> 
-  <vaadin-vertical-layout size-full _id="mainLayout"> 
-   <vaadin-label style-name="h1 colored" size-auto plain-text _id="subWindTitle">
-     Label 
+  <vaadin-vertical-layout size-full> 
+   <vaadin-label style-name="h1 colored" size-auto plain-text _id="subWindTitle" :middle :center>
+     title label 
    </vaadin-label> 
-   <vaadin-table selectable size-full _id="historyTable"> 
-    <table> 
-     <colgroup> 
-      <col property-id="Departure"> 
-      <col property-id="Destination"> 
-      <col property-id="Path"> 
-      <col property-id="Date"> 
-      <col property-id="Score"> 
-     </colgroup> 
-     <tbody> 
-      <tr item-id="1"> 
-       <td>Home</td> 
-       <td>Work</td> 
-       <td>Path here</td> 
-       <td>When here</td> 
-       <td>much score, such wow</td> 
-      </tr> 
-     </tbody> 
-    </table> 
-   </vaadin-table> 
+   <vaadin-horizontal-layout spacing size-full margin _id="bottomLayout" :expand="100"> 
+    <vaadin-vertical-layout size-auto _id="labelLayout"> 
+     <vaadin-label size-auto plain-text _id="dateLabel">
+       Label 
+     </vaadin-label> 
+     <vaadin-label size-auto plain-text _id="fromLabel">
+       Label 
+     </vaadin-label> 
+     <vaadin-label size-auto plain-text _id="toLabel">
+       Label 
+     </vaadin-label> 
+     <vaadin-label size-auto plain-text _id="scoreLabel">
+       Label 
+     </vaadin-label> 
+    </vaadin-vertical-layout> 
+    <vaadin-vertical-layout size-auto _id="labelValueLayout"> 
+     <vaadin-label size-auto plain-text _id="dateLabelValue">
+       Label 
+     </vaadin-label> 
+     <vaadin-label size-auto plain-text _id="fromLabelValue">
+       Label 
+     </vaadin-label> 
+     <vaadin-label size-auto plain-text _id="toLabelValue">
+       Label 
+     </vaadin-label> 
+     <vaadin-label size-auto plain-text _id="scoreLabelValue">
+       Label 
+     </vaadin-label> 
+    </vaadin-vertical-layout> 
+    <vaadin-vertical-layout size-full _id="rightmostLayout" :expand="100"></vaadin-vertical-layout> 
+   </vaadin-horizontal-layout> 
   </vaadin-vertical-layout>  
  </body>
 </html>
