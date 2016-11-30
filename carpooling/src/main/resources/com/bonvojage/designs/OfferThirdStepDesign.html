@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="UTF-8" name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;bvtheme&quot;}">
+  <meta charset="UTF-8" name="vaadin-version" content="7.7.0">
+ </head> 
+ <body> 
+  <vaadin-vertical-layout spacing size-full margin> 
+   <vaadin-label style-name="huge" size-auto _id="titleLabel" :center>
+     Here's the title 
+   </vaadin-label> 
+   <vaadin-label size-auto plain-text _id="subtitleLabel" :middle :center :expand="20">
+     Here's the subtitle 
+   </vaadin-label> 
+   <vaadin-horizontal-layout spacing _id="smokerLayout"> 
+    <vaadin-label style-name="large" plain-text _id="smokerLabel">
+      Question about smokers 
+    </vaadin-label> 
+    <vaadin-option-group style-name="small" _id="smokerSelection"> 
+     <option>Option 1</option> 
+     <option>Option 2</option> 
+    </vaadin-option-group> 
+   </vaadin-horizontal-layout> 
+   <vaadin-horizontal-layout spacing _id="handicapLayout"> 
+    <vaadin-label style-name="large" size-auto plain-text _id="handicapLabel">
+      Question about handicap 
+    </vaadin-label> 
+    <vaadin-option-group style-name="small" _id="handicapSelection"> 
+     <option>Option 1</option> 
+     <option>Option 2</option> 
+    </vaadin-option-group> 
+   </vaadin-horizontal-layout> 
+   <vaadin-horizontal-layout spacing _id="animalLayout"> 
+    <vaadin-label style-name="large" size-auto plain-text _id="animalLabel">
+      Question about animals 
+    </vaadin-label> 
+    <vaadin-option-group style-name="small" _id="animalSelection"> 
+     <option>Option 1</option> 
+     <option>Option 2</option> 
+    </vaadin-option-group> 
+   </vaadin-horizontal-layout> 
+   <vaadin-horizontal-layout spacing _id="luggageLayout" :expand="80"> 
+    <vaadin-label style-name="large" size-auto plain-text _id="luggageLabel">
+      Question about luggage 
+    </vaadin-label> 
+    <vaadin-option-group style-name="small" _id="luggageSelection"> 
+     <option>Option 1</option> 
+     <option>Option 2</option> 
+    </vaadin-option-group> 
+   </vaadin-horizontal-layout> 
+  </vaadin-vertical-layout>  
+ </body>
+</html>

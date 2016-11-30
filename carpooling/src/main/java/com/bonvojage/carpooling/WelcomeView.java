@@ -2,7 +2,12 @@ package com.bonvojage.carpooling;
 
 import java.util.Date;
 
+import org.vaadin.teemu.wizards.Wizard;
+
 import com.bonvojage.designs.Landpage;
+import com.bonvojage.offerwizard.FirstStep;
+import com.bonvojage.offerwizard.SecondStep;
+import com.bonvojage.offerwizard.ThirdStep;
 import com.vaadin.data.Item;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.FontAwesome;
@@ -25,11 +30,20 @@ private HistorySubWindowView subwin =new HistorySubWindowView(ui);
 public WelcomeView(CarpoolingUI ui)
 	{
 	this.ui=ui;
+	
 	setTitle("Carpooling service interface");
 	offerRideBtn.setHtmlContentAllowed(true);
 	offerRideBtn.setCaption(BvStringUtils.bvColorizeString("Offer Ride"));
+	offerRideBtn.setImmediate(true);
+	offerRideBtn.addStyleName("animated");
+	offerRideBtn.addStyleName("delay05");
+	offerRideBtn.addStyleName("rollIn");
 	offerRideBtn.setIcon(FontAwesome.AUTOMOBILE);
 	searchRideBtn.setHtmlContentAllowed(true);
+	searchRideBtn.setImmediate(true);
+	searchRideBtn.addStyleName("animated");
+	searchRideBtn.addStyleName("delay1");
+	searchRideBtn.addStyleName("rollIn");
 	searchRideBtn.setCaption(BvStringUtils.bvColorizeString("Search Ride"));
 	searchRideBtn.setIcon(FontAwesome.USERS);
 	clearUserHistory();
@@ -76,7 +90,29 @@ public WelcomeView(CarpoolingUI ui)
 		public void buttonClick(ClickEvent event) {
 			Window subWindow = new Window("History sub window example");
 			subWindow.center();
-			//subWindow.setContent();
+			subWindow.setImmediate(true);
+			subWindow.addStyleName("animated");
+			//subWindow.addStyleName("delay05");
+			subWindow.addStyleName("zoomInLeft");
+			Wizard myWizard = new Wizard();
+			myWizard.addStep(new FirstStep());
+			myWizard.addStep(new SecondStep());
+			myWizard.addStep(new ThirdStep());
+			myWizard.getFinishButton().addClickListener(new Button.ClickListener() {
+				
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -9007586123936892338L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					subWindow.close();
+					
+				}
+			});
+			myWizard.setSizeFull();
+			subWindow.setContent(myWizard);
 			subWindow.setWidth("640px");
 			subWindow.setHeight("480px");
 			UI.getCurrent().addWindow(subWindow);

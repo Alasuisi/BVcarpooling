@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="UTF-8" name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;bvtheme&quot;}">
+  <meta charset="UTF-8" name="vaadin-version" content="7.7.0">
+ </head> 
+ <body> 
+  <vaadin-vertical-layout size-full margin> 
+   <vaadin-label style-name="huge" size-auto _id="titleLable" :center>
+     Title here 
+   </vaadin-label> 
+   <vaadin-label size-auto plain-text _id="subtitleLabel" :center :expand="50">
+     Subtitle here 
+   </vaadin-label> 
+   <vaadin-list-select required-error="You must chose one trip to proceed!" required rows="6" _id="tripList" :center :expand="100"> 
+    <option>Option 1</option> 
+    <option>Option 2</option> 
+    <option>Option 3</option> 
+   </vaadin-list-select> 
+  </vaadin-vertical-layout>  
+ </body>
+</html>
