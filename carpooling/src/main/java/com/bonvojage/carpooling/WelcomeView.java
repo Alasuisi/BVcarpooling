@@ -6,6 +6,7 @@ import org.vaadin.teemu.wizards.Wizard;
 
 import com.bonvojage.designs.Landpage;
 import com.bonvojage.offerwizard.FirstStep;
+import com.bonvojage.offerwizard.FourthStep;
 import com.bonvojage.offerwizard.SecondStep;
 import com.bonvojage.offerwizard.ThirdStep;
 import com.vaadin.data.Item;
@@ -88,7 +89,7 @@ public WelcomeView(CarpoolingUI ui)
 
 		@Override
 		public void buttonClick(ClickEvent event) {
-			Window subWindow = new Window("History sub window example");
+			Window subWindow = new Window("New trip Wizard");
 			subWindow.center();
 			subWindow.setImmediate(true);
 			subWindow.addStyleName("animated");
@@ -98,6 +99,7 @@ public WelcomeView(CarpoolingUI ui)
 			myWizard.addStep(new FirstStep());
 			myWizard.addStep(new SecondStep());
 			myWizard.addStep(new ThirdStep());
+			myWizard.addStep(new FourthStep());
 			myWizard.getFinishButton().addClickListener(new Button.ClickListener() {
 				
 				/**
@@ -113,8 +115,8 @@ public WelcomeView(CarpoolingUI ui)
 			});
 			myWizard.setSizeFull();
 			subWindow.setContent(myWizard);
-			subWindow.setWidth("640px");
-			subWindow.setHeight("480px");
+			subWindow.setWidth("800px");
+			subWindow.setHeight("600px");
 			UI.getCurrent().addWindow(subWindow);
 			
 		}

@@ -31,15 +31,18 @@ public class CarpoolingUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+
         final VerticalLayout layout = new VerticalLayout();
         
        // final TextField name = new TextField();
         //name.setCaption("Type your name here:");
         WelcomeView test = new WelcomeView(this);
         test.setUserName("This guy");
+        test.addStyleName("set_background");
         layout.addComponent(test);
         layout.setMargin(true);
         layout.setSpacing(true);
+        layout.addStyleName("set_background");
         
         setContent(layout);
     }
