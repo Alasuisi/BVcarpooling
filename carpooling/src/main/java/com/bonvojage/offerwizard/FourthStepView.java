@@ -40,6 +40,7 @@ public class FourthStepView extends VerticalLayout{
 	private TextField destinationField = new TextField();
 	private Button searchButton = new Button();
 	private GoogleMap map;
+	private GoogleMapPolyline overlay=null;
 	
 	public FourthStepView()
 		{
@@ -73,7 +74,10 @@ public class FourthStepView extends VerticalLayout{
 				
 				@Override
 				public void buttonClick(ClickEvent event) {
-					testAPI();
+					String from=addressField.getValue();
+					String to = destinationField.getValue();
+					System.out.println("from: "+from+" to: "+to);
+					testAPI(from,to);
 					
 				}
 			});
@@ -82,31 +86,21 @@ public class FourthStepView extends VerticalLayout{
 		{
 		map = new GoogleMap("AIzaSyBA-NgbRwnecHN3cApbnZoaCZH0ld66fT4", null, "english");
 		map.setSizeFull();
-		ArrayList<LatLon> points = new ArrayList<LatLon>();
-		points.add(new LatLon(60.448118, 22.253738));
-		points.add(new LatLon(60.455144, 22.24198));
-		points.add(new LatLon(60.460222, 22.211939));
-		points.add(new LatLon(60.488224, 22.174602));
-		points.add(new LatLon(60.486025, 22.169195));
-
-		GoogleMapPolyline overlay = new GoogleMapPolyline(
-		        points, "#d31717", 0.8, 10);
-		map.addPolyline(overlay);
-		map.setCenter(new LatLon(60.440963, 22.25122));
-		map.setMinZoom(4);
-		map.setMaxZoom(16);
-		map.setZoom(10);
-		map.setSizeFull();
 		}
 	
-	private void testAPI()
+	private void testAPI(String from, String to)
 		{
 		
 		GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyBA-NgbRwnecHN3cApbnZoaCZH0ld66fT4");
 		DirectionsResult results=null;
 		
 		try {
-			results = DirectionsApi.getDirections(context, "ferentino", "roma").await();
+			if(overlay!=null)
+				{
+				map.removePolyline(overlay);
+				overlay=null;
+				}
+			results = DirectionsApi.getDirections(context, from, to).await();
 			DirectionsRoute[] routes = results.routes;
 			for(int i =0;i<routes.length;i++)
 				{
@@ -114,14 +108,32 @@ public class FourthStepView extends VerticalLayout{
 				List<LatLng> list = lines.decodePath();
 				ArrayList<LatLon> points = new ArrayList<LatLon>();
 				Iterator<LatLng> iter = list.iterator();
+				//boundaries inverted
+				double latMax=-100;
+				double latMin=100;
+				double lngMax=-200;
+				double lngMin=200;
 				while(iter.hasNext())
 					{
 					 LatLng current = iter.next();
 					 System.out.println(current.toString());
 					 points.add(new LatLon(current.lat,current.lng));
+					 if(current.lat>latMax)latMax=current.lat;
+					 if(current.lat<latMin)latMin=current.lat;
+					 if(current.lng>lngMax)lngMax=current.lng;
+					 if(current.lng<lngMin)lngMin=current.lng;
 					}
-				GoogleMapPolyline overlay = new GoogleMapPolyline(points, "#d31717", 0.8, 10);
+				overlay = new GoogleMapPolyline(points, "#d31717", 0.8, 10);
 				map.addPolyline(overlay);
+				double latCenter = (latMax+latMin)/2;
+				double lngCenter = (lngMax+lngMin)/2;
+				LatLon center = new LatLon(latCenter,lngCenter);
+				//LatLon center = new LatLon(latMax,lngMax);
+				System.out.println("latMax: "+latMax+" latMin: "+latMin+" lngMax: "+lngMax+" lngMin: "+lngMin+" latCenter: "+latCenter+" lngCenter: "+lngCenter );
+				map.setCenter(center);
+				//map.setVisibleAreaBoundLimits(new LatLon(latMax,lngMax), new LatLon(latMin,lngMin));
+				//map.setVisibleAreaBoundLimitsEnabled(true);
+				map.fitToBounds(new LatLon(latMax,lngMax), new LatLon(latMin,lngMin));
 				/*DirectionsLeg[] legs=routes[i].legs;
 				for(int j=0;j<legs.length;j++)
 					{
