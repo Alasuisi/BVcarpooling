@@ -2,15 +2,13 @@ package com.bonvojage.offerwizard;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.maps.DirectionsApi;
-import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
-import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.EncodedPolyline;
@@ -19,18 +17,25 @@ import com.google.maps.model.LatLng;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
+import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
+import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
+import com.vaadin.tapio.googlemaps.client.rpcs.MarkerDraggedRpc;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
 
 import utils.BvStringUtils;
 
 public class FourthStepView extends VerticalLayout{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8437169755108605020L;
 	//private VerticalLayout mainLayout;
 	private HorizontalLayout midLayout = new HorizontalLayout();
 	private VerticalLayout midLeftLayout = new VerticalLayout();
@@ -41,6 +46,7 @@ public class FourthStepView extends VerticalLayout{
 	private Button searchButton = new Button();
 	private GoogleMap map;
 	private GoogleMapPolyline overlay=null;
+	private int lastPoint=-1;
 	
 	public FourthStepView()
 		{
@@ -72,6 +78,11 @@ public class FourthStepView extends VerticalLayout{
 			
 			searchButton.addClickListener(new Button.ClickListener() {
 				
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -1730053778767639074L;
+
 				@Override
 				public void buttonClick(ClickEvent event) {
 					String from=addressField.getValue();
@@ -90,7 +101,7 @@ public class FourthStepView extends VerticalLayout{
 	
 	private void testAPI(String from, String to)
 		{
-		
+		lastPoint=-1;
 		GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyBA-NgbRwnecHN3cApbnZoaCZH0ld66fT4");
 		DirectionsResult results=null;
 		
@@ -102,11 +113,13 @@ public class FourthStepView extends VerticalLayout{
 				}
 			results = DirectionsApi.getDirections(context, from, to).await();
 			DirectionsRoute[] routes = results.routes;
+			
 			for(int i =0;i<routes.length;i++)
 				{
 				EncodedPolyline lines=routes[0].overviewPolyline;
 				List<LatLng> list = lines.decodePath();
 				ArrayList<LatLon> points = new ArrayList<LatLon>();
+				
 				Iterator<LatLng> iter = list.iterator();
 				//boundaries inverted
 				double latMax=-100;
@@ -122,6 +135,7 @@ public class FourthStepView extends VerticalLayout{
 					 if(current.lat<latMin)latMin=current.lat;
 					 if(current.lng>lngMax)lngMax=current.lng;
 					 if(current.lng<lngMin)lngMin=current.lng;
+					 lastPoint++;
 					}
 				overlay = new GoogleMapPolyline(points, "#d31717", 0.8, 10);
 				map.addPolyline(overlay);
@@ -134,13 +148,51 @@ public class FourthStepView extends VerticalLayout{
 				//map.setVisibleAreaBoundLimits(new LatLon(latMax,lngMax), new LatLon(latMin,lngMin));
 				//map.setVisibleAreaBoundLimitsEnabled(true);
 				map.fitToBounds(new LatLon(latMax,lngMax), new LatLon(latMin,lngMin));
-				/*DirectionsLeg[] legs=routes[i].legs;
-				for(int j=0;j<legs.length;j++)
-					{
-					System.out.println("inner portanna");
-					 System.out.println(legs[i].startAddress);
-					 System.out.println(legs[i].endAddress);
-					}*/
+				GoogleMapMarker start = new GoogleMapMarker();
+				start.setPosition(points.get(0));
+				start.setDraggable(true);
+				start.setAnimationEnabled(true);
+				start.setCaption("Departure here");
+				map.addMarker(start);
+				GoogleMapMarker end = new GoogleMapMarker();
+				end.setPosition(points.get(lastPoint));
+				end.setDraggable(true);
+				end.setAnimationEnabled(true);
+				end.setCaption("Destination here");
+				map.addMarker(end);
+				MarkerDragListener dragListener = new MarkerDragListener(){
+
+					@Override
+					public void markerDragged(GoogleMapMarker draggedMarker, LatLon oldPosition) {
+						LatLon oldDeparture = points.get(0);
+						//LatLon oldArrival = points.get(lastPoint);
+						boolean isDeparture=false;
+						if(oldPosition.equals(oldDeparture)) isDeparture=true;
+						LatLng newPosition = new LatLng(draggedMarker.getPosition().getLat(),draggedMarker.getPosition().getLon());
+						try {
+							GeocodingResult[] results = GeocodingApi.newRequest(context).latlng(newPosition).await();
+							if(isDeparture)
+								{
+								System.out.println("new departure is: "+results[0].formattedAddress);
+								/*map.removeMarker(start);
+								map.removeMarker(end);*/
+								map.removeMarkerDragListener(dragListener);
+								}else
+									{
+									System.out.println("new arrival is: "+results[0].formattedAddress);
+									}
+							
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						/*DirectionsApi.
+						map.removePolyline(overlay);*/
+						
+						
+					}};
+				map.addMarkerDragListener(dragListener);
 				}
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
