@@ -47,6 +47,7 @@ public class FourthStepView extends VerticalLayout{
 	private GoogleMap map;
 	private GoogleMapPolyline overlay=null;
 	private int lastPoint=-1;
+	MarkerDragListener dragListener=null;
 	
 	public FourthStepView()
 		{
@@ -88,6 +89,12 @@ public class FourthStepView extends VerticalLayout{
 					String from=addressField.getValue();
 					String to = destinationField.getValue();
 					System.out.println("from: "+from+" to: "+to);
+					Collection<GoogleMapMarker> markerColl =map.getMarkers();
+					/*Iterator<GoogleMapMarker> markerIter = markerColl.iterator();
+					while(markerIter.hasNext())
+						{
+						map.removeMarker(markerIter.next());
+						}*/
 					testAPI(from,to);
 					
 				}
@@ -97,6 +104,7 @@ public class FourthStepView extends VerticalLayout{
 		{
 		map = new GoogleMap("AIzaSyBA-NgbRwnecHN3cApbnZoaCZH0ld66fT4", null, "english");
 		map.setSizeFull();
+		map.setImmediate(true);
 		}
 	
 	private void testAPI(String from, String to)
@@ -148,19 +156,37 @@ public class FourthStepView extends VerticalLayout{
 				//map.setVisibleAreaBoundLimits(new LatLon(latMax,lngMax), new LatLon(latMin,lngMin));
 				//map.setVisibleAreaBoundLimitsEnabled(true);
 				map.fitToBounds(new LatLon(latMax,lngMax), new LatLon(latMin,lngMin));
-				GoogleMapMarker start = new GoogleMapMarker();
-				start.setPosition(points.get(0));
-				start.setDraggable(true);
-				start.setAnimationEnabled(true);
-				start.setCaption("Departure here");
-				map.addMarker(start);
-				GoogleMapMarker end = new GoogleMapMarker();
-				end.setPosition(points.get(lastPoint));
-				end.setDraggable(true);
-				end.setAnimationEnabled(true);
-				end.setCaption("Destination here");
-				map.addMarker(end);
-				MarkerDragListener dragListener = new MarkerDragListener(){
+				Collection<GoogleMapMarker> markerColl=map.getMarkers();
+				if(markerColl.isEmpty())
+				{
+					GoogleMapMarker start = new GoogleMapMarker();
+					start.setPosition(points.get(0));
+					start.setDraggable(true);
+					start.setAnimationEnabled(true);
+					start.setCaption("Departure here");
+					map.addMarker(start);
+					GoogleMapMarker end = new GoogleMapMarker();
+					end.setPosition(points.get(lastPoint));
+					end.setDraggable(true);
+					end.setAnimationEnabled(true);
+					end.setCaption("Destination here");
+					map.addMarker(end);
+				}else
+					{
+					Iterator<GoogleMapMarker> markerIter = markerColl.iterator();
+					while(markerIter.hasNext())
+						{
+						 GoogleMapMarker thisMarker = markerIter.next();
+						 if(thisMarker.getCaption().equals("Destination here")) thisMarker.setPosition(points.get(lastPoint));
+						 else thisMarker.setPosition(points.get(0));
+						}
+					}
+				dragListener = new MarkerDragListener(){
+
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = -5310998097794555252L;
 
 					@Override
 					public void markerDragged(GoogleMapMarker draggedMarker, LatLon oldPosition) {
@@ -177,9 +203,15 @@ public class FourthStepView extends VerticalLayout{
 								/*map.removeMarker(start);
 								map.removeMarker(end);*/
 								map.removeMarkerDragListener(dragListener);
+								//map.removeMarker(start);
+								testAPI(results[0].formattedAddress,to);
+								
 								}else
 									{
 									System.out.println("new arrival is: "+results[0].formattedAddress);
+									map.removeMarkerDragListener(dragListener);
+									//map.removeMarker(end);
+									testAPI(from,results[0].formattedAddress);
 									}
 							
 						} catch (Exception e) {
