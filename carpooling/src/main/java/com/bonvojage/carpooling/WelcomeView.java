@@ -23,6 +23,10 @@ import com.vaadin.ui.Button.ClickEvent;
 import utils.BvStringUtils;
 
 public class WelcomeView extends Landpage {
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4387692572453769971L;
 private CarpoolingUI ui;
 private HistorySubWindowView subwin =new HistorySubWindowView(ui);
 
