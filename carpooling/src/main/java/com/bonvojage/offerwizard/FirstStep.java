@@ -3,10 +3,9 @@ package com.bonvojage.offerwizard;
 import org.vaadin.teemu.wizards.WizardStep;
 
 import com.bonvojage.carpooling.CarpoolingUI;
+import com.bonvojage.utils.BvStringUtils;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
-
-import utils.BvStringUtils;
 
 public class FirstStep implements WizardStep{
 

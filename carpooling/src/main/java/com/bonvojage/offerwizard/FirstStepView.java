@@ -2,8 +2,7 @@ package com.bonvojage.offerwizard;
 
 import com.bonvojage.carpooling.CarpoolingUI;
 import com.bonvojage.designs.OfferFirstStep;
-
-import utils.BvStringUtils;
+import com.bonvojage.utils.BvStringUtils;
 
 public class FirstStepView extends OfferFirstStep{
 	/**

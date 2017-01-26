@@ -1,5 +1,9 @@
 package com.bonvojage.carpooling;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 
 import org.vaadin.teemu.wizards.Wizard;
@@ -9,6 +13,8 @@ import com.bonvojage.offerwizard.FirstStep;
 import com.bonvojage.offerwizard.FourthStep;
 import com.bonvojage.offerwizard.SecondStep;
 import com.bonvojage.offerwizard.ThirdStep;
+import com.bonvojage.utils.BvStringUtils;
+import com.bonvojage.utils.DbConnector;
 import com.vaadin.data.Item;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.FontAwesome;
@@ -19,8 +25,6 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-
-import utils.BvStringUtils;
 
 public class WelcomeView extends Landpage {
 /**
@@ -125,7 +129,43 @@ public WelcomeView(CarpoolingUI ui)
 			
 		}
 	});
+	
+	searchRideBtn.addClickListener(new Button.ClickListener() {
+		
+		@Override
+		public void buttonClick(ClickEvent event) {
+			DbConnector conn = new DbConnector();
+			Connection c=conn.connect();
+			Statement stmt = null;
+			
+			try {
+				stmt = c.createStatement();
+				ResultSet rs = stmt.executeQuery( "SELECT * FROM user_query;" );
+				 while ( rs.next() ) {
+			            int id = rs.getInt("user_id");
+			            String  address = rs.getString("source_location_address");
+			            int queryid  = rs.getInt("query_id");
+			            String  destaddress = rs.getString("destination_location_address");
+			            System.out.println( "ID = " + id );
+			            System.out.println( "SOURCE = " + address );
+			            System.out.println( "AGE = " + queryid );
+			            System.out.println( "DESTINATION = " + destaddress );
+			            System.out.println();
+			         }
+			         rs.close();
+			         stmt.close();
+			         conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+	});
 	}
+
+	
 public void setUserName(String userString)
 	{
 	userLabel.setValue(userString);

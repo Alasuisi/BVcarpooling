@@ -2,11 +2,10 @@ package com.bonvojage.offerwizard;
 
 import com.bonvojage.carpooling.CarpoolingUI;
 import com.bonvojage.designs.OfferSecondStepDesign;
+import com.bonvojage.utils.BvStringUtils;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.UI;
-
-import utils.BvStringUtils;
 
 public class SecondStepView extends OfferSecondStepDesign{
 	/**
