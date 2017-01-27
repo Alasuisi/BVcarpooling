@@ -50,7 +50,11 @@ public class CarpoolingUI extends UI {
         layout.addStyleName("set_background");
         System.out.println(vaadinRequest.getParameter("key"));
         String user = vaadinRequest.getParameter("key");
-        if(user!=null) test.setUserName(user);
+        if(user!=null) 
+        	{
+        		test.setUserName(user);
+        		UI.getCurrent().getSession().setAttribute("userid", vaadinRequest.getParameter("key"));
+        	}
         setContent(layout);
         VaadinSession.getCurrent().addRequestHandler(new RequestHandler(){
 

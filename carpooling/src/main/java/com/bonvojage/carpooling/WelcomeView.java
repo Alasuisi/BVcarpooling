@@ -14,7 +14,10 @@ import com.bonvojage.offerwizard.FourthStep;
 import com.bonvojage.offerwizard.SecondStep;
 import com.bonvojage.offerwizard.ThirdStep;
 import com.bonvojage.utils.BvStringUtils;
+import com.bonvojage.utils.DaoException;
 import com.bonvojage.utils.DbConnector;
+import com.bonvoyage.persistance.UserDAO;
+import com.bonvoyaje.domain.User;
 import com.vaadin.data.Item;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.FontAwesome;
@@ -134,6 +137,29 @@ public WelcomeView(CarpoolingUI ui)
 		
 		@Override
 		public void buttonClick(ClickEvent event) {
+			try {
+				if(UI.getCurrent().getSession().getAttribute("userid")!=null)
+					{
+					Integer key=Integer.parseInt((String)UI.getCurrent().getSession().getAttribute("userid"));
+					User test = UserDAO.load(key.intValue());
+					System.out.println("key in session is:"+key.intValue());
+					System.out.println(test.getProfileID()+" "+test.getUserID()+" "+test.getNtransit().toString());
+					Label userdata = new Label("user:"+test.getUserID()+" profileid:"+test.getProfileID()+
+											   "confort:"+test.getConfortlevel()+" emission:"+test.getEmissionsens()+" etc etc");
+					rightSplitVertical.addComponent(userdata);
+					}else
+						{
+						Label error = new Label("Cannot use that function, carpooling module has been loaded without an user!");
+								rightSplitVertical.addComponent(error);		
+						}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (DaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			/*
 			DbConnector conn = new DbConnector();
 			Connection c=conn.connect();
 			Statement stmt = null;
@@ -159,7 +185,7 @@ public WelcomeView(CarpoolingUI ui)
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+			*/
 			
 		}
 	});

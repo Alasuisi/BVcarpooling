@@ -79,6 +79,10 @@ public class DbConnector {
 			      String strDbPassword = "bvpsql2016";                    // database login password
 			      Class.forName("org.postgresql.Driver");
 			      con = DriverManager.getConnection("jdbc:postgresql://localhost:"+nLocalPort+"/bonvoyage", strDbUser, strDbPassword);
+			      int isolation = Connection.TRANSACTION_SERIALIZABLE;
+			      con.setTransactionIsolation(isolation);
+			      con.setReadOnly(false);
+				  con.setAutoCommit(false);
 			      return con;
 		      }catch(Exception e)
 		      	{
