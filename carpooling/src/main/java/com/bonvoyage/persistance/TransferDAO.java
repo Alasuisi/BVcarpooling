@@ -3,9 +3,14 @@ package com.bonvoyage.persistance;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+
+import org.postgresql.geometric.PGpoint;
+import org.postgresql.util.PGobject;
 
 import com.bonvojage.utils.DbConnector;
 import com.bonvoyaje.domain.Transfer;
+
 
 public class TransferDAO {
 	
@@ -24,41 +29,45 @@ public class TransferDAO {
 			pstm.setInt(2, transfer.getProf_id());
 			pstm.setInt(4, transfer.getClass_id());
 			pstm.setInt(5, transfer.getReser_id());
-			pstm.setInt(5, transfer.getPool_id());
-			pstm.setString(6, transfer.getUser_role().toString());
-			pstm.setString(7, transfer.getDep_addr());
-			pstm.setString(8, transfer.getArr_addr());
-			pstm.setString(9, transfer.getDep_gps().toString());
+			pstm.setInt(6, transfer.getPool_id());
+			//pstm.setString(6, transfer.getUser_role().toString());
+			
+			PGobject userRole = new PGobject();
+			userRole.setType("json");
+			userRole.setValue(transfer.getUser_role().toJson().toString());
+			pstm.setObject(7, userRole);
+			
+			pstm.setString(8, transfer.getDep_addr());
+			pstm.setString(9, transfer.getArr_addr());
+			
+			PGpoint depGps = new PGpoint(transfer.getDep_gps().x,transfer.getDep_gps().y);
+			//pstm.setString(9, transfer.getDep_gps().toString());
+			pstm.setObject(10, depGps);
+						
+			PGpoint arrGps = new PGpoint(transfer.getArr_gps().x,transfer.getArr_gps().y);
+			pstm.setObject(11,arrGps);
+			Timestamp timestamp = new Timestamp(transfer.getDep_time());
+			pstm.setTimestamp(12, timestamp);
+			pstm.setString(13, transfer.getType());
+			pstm.setInt(14, transfer.getOcc_seats());
+			pstm.setInt(15, transfer.getAva_seats());
+			pstm.setBoolean(16, transfer.isAnimal());
+			pstm.setBoolean(17, transfer.isHandicap());
+			pstm.setBoolean(18, transfer.isSmoke());
+			pstm.setBoolean(19, transfer.isLuggage());
+			pstm.setString(20, transfer.getStatus());
+			pstm.setDouble(21, transfer.getPrice());
+			
+			PGobject path = new PGobject();
+			path.setType("json");
+			path.setValue(transfer.getPath().toJson().toString());
+			pstm.setObject(22, path);
 		}
 	
 	
 	
-	/*comando SQL per l'inserimento di una nuova istanza di Persona
-	/ *ordine degli attributi: CF(STRING),nome(STRING),cognome(STRING),username(STRING),pass(STRING)*/
-		private static final String INSERT_PERSONA = "INSERT INTO Persona(CF,nome,cognome,username,pass,sesso) VALUES(?,?,?,?,?,?)";
-		
-	/*comando SQL per l'inserimento di una nuova istanza di Citta
-	 * ordine degli attributi nome(STRING),regione(STRING)
-	 */
-		private static final String INSERT_CITTA="INSERT IGNORE INTO Citta(nome,regione) VALUES (?,?)";
-		
-	/*comando SQL per l'inserimento di una nuova istanza di R_Nato,
-	 * l'associazione che lega un entità persona a un'entità nato
-	 * ordine degli attributi persona(STRING),citta(STRING),regione(STRING),dataNascita(DATE);
-	 */
-		private static final String INSERT_R_NATO = "INSERT INTO R_Nato(persona,citta,regione,dataNascita) VALUES (?,?,?,?)";
-		
-	/*comando SQL per l'inserimento di una nuova istanza di Famiglia
-	/ * ordine degli attributi: nomeFamiglia(STRING),idFamiglia(INT)*/
-		private static final String INSERT_FAMIGLIA= "INSERT INTO Famiglia(nomeFamiglia,idFamiglia) VALUES(?,DEFAULT)";
-		
-	/*comando SQL per l'inserimento di una nuova istanza di R_Appartiene
-	 * l'associazione che lega una persona alla famiglia di appartenenza
-	/ * ordine degli attributi: persona(STRING),famiglia(INT)*/
-		private static final String INSERT_R_APPARTIENE="INSERT INTO R_Appartiene(persona,famiglia) VALUES(?,?)";
-		
-		private static final String GET_MAX_FAM="SELECT MAX(idFamiglia) FROM Famiglia";
-				
+	
+	/*			
 		public static void insert(Persona tizio,Citta cit) throws SQLException, ClassNotFoundException
 			{
 			Connection con=null;
@@ -135,5 +144,5 @@ public class TransferDAO {
 				}
 			}
 
-
+*/
 }
