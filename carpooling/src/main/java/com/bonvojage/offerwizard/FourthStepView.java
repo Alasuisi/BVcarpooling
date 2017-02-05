@@ -7,6 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.bonvojage.utils.BvStringUtils;
+import com.bonvoyaje.domain.Transfer;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -28,6 +33,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 public class FourthStepView extends VerticalLayout{
@@ -47,6 +53,7 @@ public class FourthStepView extends VerticalLayout{
 	private GoogleMapPolyline overlay=null;
 	private int lastPoint=-1;
 	MarkerDragListener dragListener=null;
+	private Transfer tran = UI.getCurrent().getSession().getAttribute(Transfer.class);
 	
 	public FourthStepView()
 		{
@@ -94,6 +101,8 @@ public class FourthStepView extends VerticalLayout{
 						{
 						map.removeMarker(markerIter.next());
 						}*/
+					tran.setDep_addr(from);
+					tran.setArr_addr(to);
 					testAPI(from,to);
 					
 				}
@@ -125,6 +134,11 @@ public class FourthStepView extends VerticalLayout{
 				{
 				EncodedPolyline lines=routes[0].overviewPolyline;
 				List<LatLng> list = lines.decodePath();
+				/////////////////TEST GEOJSON/////////////////
+				
+				
+				System.out.println(toJson(list));
+				/////////////////////////////////////////////
 				ArrayList<LatLon> points = new ArrayList<LatLon>();
 				
 				Iterator<LatLng> iter = list.iterator();
@@ -136,7 +150,7 @@ public class FourthStepView extends VerticalLayout{
 				while(iter.hasNext())
 					{
 					 LatLng current = iter.next();
-					 System.out.println(current.toString());
+					 //System.out.println(current.toString());
 					 points.add(new LatLon(current.lat,current.lng));
 					 if(current.lat>latMax)latMax=current.lat;
 					 if(current.lat<latMin)latMin=current.lat;
@@ -231,6 +245,49 @@ public class FourthStepView extends VerticalLayout{
 		}
 		
 		
+		}
+	
+	public String toJson(List<LatLng> list){
+		  JsonObject featureCollection = new JsonObject();
+		  featureCollection.addProperty("type", "FeatureCollection");
+		  JsonObject properties = new JsonObject();
+		  properties.addProperty("name", "ESPG:4326");
+		  JsonObject crs = new JsonObject();
+		  crs.addProperty("type", "name");
+		  crs.add("properties", properties);
+		  featureCollection.add("crs", crs);
+
+		  JsonArray features = new JsonArray();
+		  JsonObject feature = new JsonObject();
+		  feature.addProperty("type", "Feature");
+		  //JSONObject geometry = new JSONObject();
+
+		  //JSONAray JSONArrayCoord = new JSONArray();
+		  Iterator<LatLng> iter = list.iterator();
+		  while(iter.hasNext())
+		  	{
+			  LatLng eachElement = iter.next();
+			    //if(eachElement.getLongtitude()!=null){
+			      JsonObject geometry = new JsonObject();
+			      JsonArray JSONArrayCoord = new JsonArray();
+			      JsonObject newFeature = new JsonObject();
+			     // JsonObject jsonCoord = new JsonObject();
+			     // jsonCoord.addProperty("0", eachElement.lng);
+			     // jsonCoord.addProperty("1", eachElement.lat);
+			      String lng =new Double(eachElement.lng).toString();
+			      String lat = new Double(eachElement.lat).toString();
+			      JSONArrayCoord.add(new JsonPrimitive(lng));
+			      JSONArrayCoord.add(new JsonPrimitive(lat));
+			      
+			      geometry.addProperty("type", "Point");
+			      geometry.add("coordinates", JSONArrayCoord);
+			      feature.add("geometry", geometry);
+			      features.add(newFeature);
+			      featureCollection.add("features", features);
+			    //}
+		  	}
+
+		  return featureCollection.toString();
 		}
 
 }

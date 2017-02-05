@@ -3,7 +3,11 @@ package com.bonvojage.offerwizard;
 import com.bonvojage.carpooling.CarpoolingUI;
 import com.bonvojage.designs.OfferThirdStepDesign;
 import com.bonvojage.utils.BvStringUtils;
+import com.bonvoyaje.domain.Transfer;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.UI;
 
 public class ThirdStepView extends OfferThirdStepDesign{
 
@@ -12,7 +16,7 @@ public class ThirdStepView extends OfferThirdStepDesign{
 	 */
 	private static final long serialVersionUID = -6413035607816601665L;
 	private CarpoolingUI ui;
-	
+	private Transfer tran = (Transfer) UI.getCurrent().getSession().getAttribute(Transfer.class);
 	public ThirdStepView(CarpoolingUI ui)
 		{
 		this.ui=ui;
@@ -48,5 +52,93 @@ public class ThirdStepView extends OfferThirdStepDesign{
 		super.luggageSelection.setWidth("150px");
 		super.luggageSelection.removeAllItems();
 		super.luggageSelection.addItems("Yes","No");
+		
+		super.smokerSelection.addValueChangeListener(new Property.ValueChangeListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -4012570066199683803L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				if(smokerSelection.getValue().toString().equals("Yes"))tran.setSmoke(true);
+				else tran.setSmoke(false);
+				updateTransfer();
+				
+			}
+		});
+		
+		super.handicapSelection.addValueChangeListener(new Property.ValueChangeListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 2978774416304991962L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				if(handicapSelection.getValue().toString().equals("Yes")) tran.setHandicap(true);
+				else tran.setHandicap(false);
+				updateTransfer();
+			}
+		});
+		
+		super.animalSelection.addValueChangeListener(new Property.ValueChangeListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -560525369645236935L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				if(animalSelection.getValue().toString().equals("Yes")) tran.setAnimal(true);
+				else tran.setAnimal(false);
+				updateTransfer();
+				
+			}
+		});
+		
+		super.luggageSelection.addValueChangeListener(new Property.ValueChangeListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 8235662468998390322L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				if(luggageSelection.getValue().toString().equals("Yes")) tran.setLuggage(true);
+				else tran.setLuggage(false);
+				updateTransfer();
+				
+			}
+		});
+	
+		}
+	private void updateTransfer()
+		{
+			if(isSelectionDone())
+			{
+			UI.getCurrent().getSession().setAttribute(Transfer.class, tran);
+			}
+		}
+	
+	public boolean isSelectionDone()
+		{
+			boolean smoker=!super.smokerSelection.isEmpty();
+			boolean luggage = !super.luggageSelection.isEmpty();
+			boolean handicap = !super.handicapSelection.isEmpty();
+			boolean animal = !super.animalSelection.isEmpty();
+			if(smoker && luggage && handicap && animal) 
+				{
+				System.out.println(smoker);
+				System.out.println(luggage);
+				System.out.println(handicap);
+				System.out.println(animal);
+				return true;
+				}
+			else return false;
 		}
 }

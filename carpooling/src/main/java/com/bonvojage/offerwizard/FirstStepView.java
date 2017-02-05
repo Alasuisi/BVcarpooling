@@ -4,6 +4,8 @@ import com.bonvojage.carpooling.CarpoolingUI;
 import com.bonvojage.designs.OfferFirstStep;
 import com.bonvojage.utils.BvStringUtils;
 import com.bonvoyaje.domain.Transfer;
+import com.bonvoyaje.domain.User;
+import com.google.gson.JsonObject;
 import com.vaadin.ui.UI;
 
 public class FirstStepView extends OfferFirstStep{
@@ -15,7 +17,13 @@ public class FirstStepView extends OfferFirstStep{
 	
 public FirstStepView(CarpoolingUI ui){
 	this.ui=ui;
+	User loggedUser = UI.getCurrent().getSession().getAttribute(User.class);
 	Transfer tran = new Transfer();
+	JsonObject user_role = new JsonObject();
+	user_role.addProperty("role", "driver");
+	tran.setUser_role(user_role);
+	tran.setUser_id(loggedUser.getUserID());
+	tran.setProf_id(loggedUser.getProfileID());
 	UI.getCurrent().getSession().setAttribute(Transfer.class, tran);
 	titleLable.setValue(BvStringUtils.bvColorizeString("Please choose a trip to share"));
 	subtitleLabel.setValue("You can choose only one trip to share, from the list below");

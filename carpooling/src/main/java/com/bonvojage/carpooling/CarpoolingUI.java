@@ -1,11 +1,15 @@
 package com.bonvojage.carpooling;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Locale;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.bonvojage.utils.DaoException;
+import com.bonvoyage.persistance.UserDAO;
+import com.bonvoyaje.domain.User;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.FontAwesome;
@@ -52,8 +56,22 @@ public class CarpoolingUI extends UI {
         String user = vaadinRequest.getParameter("key");
         if(user!=null) 
         	{
-        		test.setUserName(user);
-        		UI.getCurrent().getSession().setAttribute("userid", vaadinRequest.getParameter("key"));
+        		//test.setUserName(user);
+        		//UI.getCurrent().getSession().setAttribute("userid", vaadinRequest.getParameter("key"));
+        		//Integer key=Integer.parseInt((String)UI.getCurrent().getSession().getAttribute("userid"));
+				User loggedUser;
+				try {
+					loggedUser = UserDAO.load(Integer.parseInt(user));
+					test.setUserName(new Integer(loggedUser.getUserID()).toString());
+					UI.getCurrent().getSession().setAttribute(User.class, loggedUser);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (DaoException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
         	}
         setContent(layout);
         VaadinSession.getCurrent().addRequestHandler(new RequestHandler(){

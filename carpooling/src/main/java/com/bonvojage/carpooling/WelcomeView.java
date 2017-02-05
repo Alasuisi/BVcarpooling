@@ -45,7 +45,7 @@ public class WelcomeView extends Landpage {
 	private static final long serialVersionUID = 4387692572453769971L;
 private CarpoolingUI ui;
 private HistorySubWindowView subwin =new HistorySubWindowView(ui);
-
+private User loggedUser = null;
 
 
 public WelcomeView(CarpoolingUI ui)
@@ -150,11 +150,12 @@ public WelcomeView(CarpoolingUI ui)
 				if(UI.getCurrent().getSession().getAttribute("userid")!=null)
 					{
 					Integer key=Integer.parseInt((String)UI.getCurrent().getSession().getAttribute("userid"));
-					User test = UserDAO.load(key.intValue());
+					User loggedUser = UserDAO.load(key.intValue());
+					UI.getCurrent().getSession().setAttribute(User.class, loggedUser);
 					System.out.println("key in session is:"+key.intValue());
-					System.out.println(test.getProfileID()+" "+test.getUserID()+" "+test.getNtransit().toString());
-					Label userdata = new Label("user:"+test.getUserID()+" profileid:"+test.getProfileID()+
-											   "confort:"+test.getConfortlevel()+" emission:"+test.getEmissionsens()+" etc etc");
+					//System.out.println(loggedUser.getProfileID()+" "+loggedUser.getUserID()+" "+loggedUser.getNtransit().toString());
+					Label userdata = new Label("user:"+loggedUser.getUserID()+" profileid:"+loggedUser.getProfileID()+
+											   "confort:"+loggedUser.getConfortlevel()+" emission:"+loggedUser.getEmissionsens()+" etc etc");
 					rightSplitVertical.addComponent(userdata);
 					
 					}else
