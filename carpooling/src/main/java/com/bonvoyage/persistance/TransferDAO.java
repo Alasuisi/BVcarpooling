@@ -5,18 +5,23 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import org.postgresql.geometric.PGpoint;
 import org.postgresql.util.PGobject;
+import org.postgresql.geometric.PGpoint;
 
 import com.bonvojage.utils.DbConnector;
 import com.bonvoyaje.domain.Transfer;
 
 
+
 public class TransferDAO {
 	
-		private static final String INSERT_TRANSFER = "INSERT INTO transfer(Transfer_ID,User_ID,Profile_ID,Class_ID,Reservation_ID,Pool_ID,User_Role,Departure_Address,Arrival_address,Departure_GPS,"
-																			+ "Arrival_GPS,Departure_Time,Type,Occupied_seats,Available_seats,Animal,Handicap,Smoke,Luggage,Status,Price,Path)"
-																			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		/*private static final String INSERT_TRANSFER = "INSERT INTO Transfer(\"Transfer_ID\",\"User_ID\",\"Profile_ID\",\"Class_ID\",\"Reservation_ID\",\"Pool_ID\",\"User_Role\",\"Departure_Address\",\"Arrival_Address\",\"Departure_GPS\","
+																			+ "\"Arrival_GPS\",\"Departure_Time\",\"Type\",\"Occupied_Seats\",\"Available_Seats\",\"Animal\",\"Handicap\",\"Smoke\",\"Luggage\",\"Status\",\"Price\",\"Path\")"
+																			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";*/
+		private static final String INSERT_TRANSFER = "INSERT INTO Transfer(\"User_ID\",\"Profile_ID\",\"Class_ID\",\"Reservation_ID\",\"Pool_ID\",\"User_Role\",\"Departure_Address\",\"Arrival_Address\",\"Departure_GPS\","
+				+ "\"Arrival_GPS\",\"Departure_Time\",\"Type\",\"Occupied_Seats\",\"Available_Seats\",\"Animal\",\"Handicap\",\"Smoke\",\"Luggage\",\"Status\",\"Price\",\"Path\")"
+				+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		
 		public static void insert(Transfer transfer) throws SQLException
 		{
 			Connection con = null;
@@ -24,44 +29,48 @@ public class TransferDAO {
 			DbConnector manager = new DbConnector();
 			con = manager.connect();
 			pstm = con.prepareStatement(INSERT_TRANSFER);
-			pstm.setInt(1, transfer.getTran_id());
+			//pstm.setInt(1, transfer.getTran_id());
 			pstm.setInt(1, transfer.getUser_id());
 			pstm.setInt(2, transfer.getProf_id());
-			pstm.setInt(4, transfer.getClass_id());
-			pstm.setInt(5, transfer.getReser_id());
-			pstm.setInt(6, transfer.getPool_id());
+			pstm.setInt(3, transfer.getClass_id());
+			pstm.setInt(4, transfer.getReser_id());
+			pstm.setInt(5, transfer.getPool_id());
 			//pstm.setString(6, transfer.getUser_role().toString());
 			
 			PGobject userRole = new PGobject();
 			userRole.setType("json");
-			userRole.setValue(transfer.getUser_role().toJson().toString());
-			pstm.setObject(7, userRole);
+			userRole.setValue(transfer.getUser_role().toString());
+			pstm.setObject(6, userRole);
 			
-			pstm.setString(8, transfer.getDep_addr());
-			pstm.setString(9, transfer.getArr_addr());
+			pstm.setString(7, transfer.getDep_addr());
+			pstm.setString(8, transfer.getArr_addr());
 			
-			PGpoint depGps = new PGpoint(transfer.getDep_gps().x,transfer.getDep_gps().y);
+			PGpoint depGps = new PGpoint(transfer.getDep_gps().getX(),transfer.getDep_gps().getY());
 			//pstm.setString(9, transfer.getDep_gps().toString());
-			pstm.setObject(10, depGps);
+			pstm.setObject(9, depGps);
 						
-			PGpoint arrGps = new PGpoint(transfer.getArr_gps().x,transfer.getArr_gps().y);
-			pstm.setObject(11,arrGps);
+			PGpoint arrGps = new PGpoint(transfer.getArr_gps().getX(),transfer.getArr_gps().getY());
+			pstm.setObject(10,arrGps);
 			Timestamp timestamp = new Timestamp(transfer.getDep_time());
-			pstm.setTimestamp(12, timestamp);
-			pstm.setString(13, transfer.getType());
-			pstm.setInt(14, transfer.getOcc_seats());
-			pstm.setInt(15, transfer.getAva_seats());
-			pstm.setBoolean(16, transfer.isAnimal());
-			pstm.setBoolean(17, transfer.isHandicap());
-			pstm.setBoolean(18, transfer.isSmoke());
-			pstm.setBoolean(19, transfer.isLuggage());
-			pstm.setString(20, transfer.getStatus());
-			pstm.setDouble(21, transfer.getPrice());
+			pstm.setTimestamp(11, timestamp);
+			pstm.setString(12, transfer.getType());
+			pstm.setInt(13, transfer.getOcc_seats());
+			pstm.setInt(14, transfer.getAva_seats());
+			pstm.setBoolean(15, transfer.isAnimal());
+			pstm.setBoolean(16, transfer.isHandicap());
+			pstm.setBoolean(17, transfer.isSmoke());
+			pstm.setBoolean(18, transfer.isLuggage());
+			pstm.setString(19, transfer.getStatus());
+			pstm.setDouble(20, transfer.getPrice());
 			
 			PGobject path = new PGobject();
 			path.setType("json");
-			path.setValue(transfer.getPath().toJson().toString());
-			pstm.setObject(22, path);
+			path.setValue(transfer.getPath().toString());
+			pstm.setObject(21, path);
+			
+			pstm.executeUpdate();
+			con.commit();
+			con.close();
 		}
 	
 	

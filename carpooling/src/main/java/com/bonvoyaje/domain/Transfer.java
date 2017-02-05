@@ -1,8 +1,11 @@
 package com.bonvoyaje.domain;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 
-import elemental.json.JsonObject;
+import com.google.gson.JsonObject;
+
+
 
 public class Transfer {
 	private int tran_id;
@@ -14,8 +17,8 @@ public class Transfer {
 	private JsonObject user_role;
 	private String dep_addr;
 	private String arr_addr;
-	private Point dep_gps;
-	private Point arr_gps;
+	private Point2D dep_gps;
+	private Point2D arr_gps;
 	private Long dep_time;
 	private String type;
 	private int occ_seats;
@@ -102,20 +105,20 @@ public class Transfer {
 		this.arr_addr = arr_addr;
 	}
 
-	public Point getDep_gps() {
+	public Point2D getDep_gps() {
 		return dep_gps;
 	}
 
-	public void setDep_gps(Point dep_gps) {
+	public void setDep_gps(Point2D dep_gps) {
 		this.dep_gps = dep_gps;
 	}
 
-	public Point getArr_gps() {
+	public Point2D getArr_gps() {
 		return arr_gps;
 	}
 
-	public void setArr_gps(Point arr_gps) {
-		this.arr_gps = arr_gps;
+	public void setArr_gps(Point2D point2d) {
+		this.arr_gps = point2d;
 	}
 
 	public Long getDep_time() {

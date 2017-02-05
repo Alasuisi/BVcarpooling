@@ -1,5 +1,7 @@
 package com.bonvojage.carpooling;
 
+import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,8 +18,12 @@ import com.bonvojage.offerwizard.ThirdStep;
 import com.bonvojage.utils.BvStringUtils;
 import com.bonvojage.utils.DaoException;
 import com.bonvojage.utils.DbConnector;
+import com.bonvoyage.persistance.TransferDAO;
 import com.bonvoyage.persistance.UserDAO;
+import com.bonvoyaje.domain.Transfer;
 import com.bonvoyaje.domain.User;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.vaadin.data.Item;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.FontAwesome;
@@ -26,6 +32,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
+
+
+
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 
@@ -147,6 +156,7 @@ public WelcomeView(CarpoolingUI ui)
 					Label userdata = new Label("user:"+test.getUserID()+" profileid:"+test.getProfileID()+
 											   "confort:"+test.getConfortlevel()+" emission:"+test.getEmissionsens()+" etc etc");
 					rightSplitVertical.addComponent(userdata);
+					
 					}else
 						{
 						Label error = new Label("Cannot use that function, carpooling module has been loaded without an user!");
@@ -189,7 +199,63 @@ public WelcomeView(CarpoolingUI ui)
 			
 		}
 	});
+	
+	Button testbutton = new Button("test transfer insert");
+	super.buttonsLayout.addComponent(testbutton);
+	testbutton.addClickListener(new Button.ClickListener() {
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -8978462989992476953L;
+
+		@Override
+		public void buttonClick(ClickEvent event) {
+			Transfer tran = new Transfer();
+			tran.setAnimal(true);
+			tran.setArr_addr("prova destinazione");
+			Point2D point = new Point2D.Float();
+			point.setLocation(4.5, 6.6);
+			tran.setArr_gps(point);
+			tran.setAva_seats(4);
+			tran.setClass_id(666);
+			tran.setDep_addr("prova partenza");
+			Point2D deppoint = new Point2D.Float();
+			deppoint.setLocation(8.8, 15.5);
+			tran.setDep_gps(deppoint);
+			tran.setDep_time(System.currentTimeMillis());
+			tran.setHandicap(false);
+			tran.setLuggage(true);
+			tran.setOcc_seats(2);
+			JsonObject path = new JsonObject();
+			path.addProperty("test property", "aint nobody got time fo dat");
+			path.addProperty("test property2", "test test test");
+			tran.setPath(path);
+			tran.setPool_id(333);
+			tran.setPrice(55.0);
+			tran.setProf_id(1);
+			tran.setReser_id(33);
+			tran.setSmoke(true);
+			tran.setStatus("status string test");
+			//tran.setTran_id(1);
+			tran.setType("type string test");
+			tran.setUser_id(80);
+			JsonObject user_role = new JsonObject();
+			user_role.addProperty("role", "driver");
+			tran.setUser_role(user_role);
+			try {
+				TransferDAO.insert(tran);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+	});
 	}
+
+		
 
 	
 public void setUserName(String userString)

@@ -3,6 +3,8 @@ package com.bonvojage.offerwizard;
 import com.bonvojage.carpooling.CarpoolingUI;
 import com.bonvojage.designs.OfferFirstStep;
 import com.bonvojage.utils.BvStringUtils;
+import com.bonvoyaje.domain.Transfer;
+import com.vaadin.ui.UI;
 
 public class FirstStepView extends OfferFirstStep{
 	/**
@@ -13,6 +15,8 @@ public class FirstStepView extends OfferFirstStep{
 	
 public FirstStepView(CarpoolingUI ui){
 	this.ui=ui;
+	Transfer tran = new Transfer();
+	UI.getCurrent().getSession().setAttribute(Transfer.class, tran);
 	titleLable.setValue(BvStringUtils.bvColorizeString("Please choose a trip to share"));
 	subtitleLabel.setValue("You can choose only one trip to share, from the list below");
 	tripList.removeAllItems();
