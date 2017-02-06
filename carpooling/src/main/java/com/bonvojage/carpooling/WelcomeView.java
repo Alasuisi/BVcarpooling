@@ -129,6 +129,12 @@ public WelcomeView(CarpoolingUI ui)
 
 				@Override
 				public void buttonClick(ClickEvent event) {
+					try {
+						TransferDAO.insert(UI.getCurrent().getSession().getAttribute(Transfer.class));
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					subWindow.close();
 					
 				}

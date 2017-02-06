@@ -1,6 +1,7 @@
 package com.bonvojage.offerwizard;
 
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -8,6 +9,8 @@ import java.util.List;
 
 import com.bonvojage.utils.BvStringUtils;
 import com.bonvoyaje.domain.Transfer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -20,6 +23,8 @@ import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.EncodedPolyline;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
+import com.vaadin.server.Page;
+import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
@@ -32,6 +37,8 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -54,6 +61,7 @@ public class FourthStepView extends VerticalLayout{
 	private int lastPoint=-1;
 	MarkerDragListener dragListener=null;
 	private Transfer tran = UI.getCurrent().getSession().getAttribute(Transfer.class);
+	private boolean transferComplete = false;
 	
 	public FourthStepView()
 		{
@@ -64,9 +72,15 @@ public class FourthStepView extends VerticalLayout{
 			addressField.setCaption("Departure");
 			addressField.setDescription("Please enter your departure address here");
 			addressField.setWidth("100%");
+			addressField.setImmediate(true);
+			addressField.setRequired(true);
+			addressField.setValidationVisible(false);
 			destinationField.setCaption("Destination");
 			destinationField.setDescription("Please enter your destination address here");
 			destinationField.setWidth("100%");
+			destinationField.setImmediate(true);
+			destinationField.setRequired(true);
+			destinationField.setValidationVisible(false);
 			midLeftLayout.addComponents(addressField,destinationField);
 			midLeftLayout.setWidth("100%");
 			searchButton.setCaption("Search");
@@ -92,18 +106,31 @@ public class FourthStepView extends VerticalLayout{
 
 				@Override
 				public void buttonClick(ClickEvent event) {
-					String from=addressField.getValue();
-					String to = destinationField.getValue();
-					System.out.println("from: "+from+" to: "+to);
-					Collection<GoogleMapMarker> markerColl =map.getMarkers();
-					/*Iterator<GoogleMapMarker> markerIter = markerColl.iterator();
-					while(markerIter.hasNext())
+					if(addressField.isEmpty()|| destinationField.isEmpty())
 						{
-						map.removeMarker(markerIter.next());
-						}*/
-					tran.setDep_addr(from);
-					tran.setArr_addr(to);
-					testAPI(from,to);
+						 if(addressField.isEmpty()) addressField.setValidationVisible(true);
+						 if(destinationField.isEmpty()) destinationField.setValidationVisible(true);
+						 Notification error = new Notification("Incomplete Form","Please fill up all the required informations",Type.ERROR_MESSAGE);
+						 error.setDelayMsec(2000);
+						 error.setPosition(Position.TOP_RIGHT);
+						 error.show(Page.getCurrent());
+						}
+					else{
+						addressField.setValidationVisible(false);
+						destinationField.setValidationVisible(false);
+						String from=addressField.getValue();
+						String to = destinationField.getValue();
+						System.out.println("from: "+from+" to: "+to);
+						Collection<GoogleMapMarker> markerColl =map.getMarkers();
+						/*Iterator<GoogleMapMarker> markerIter = markerColl.iterator();
+						while(markerIter.hasNext())
+							{
+							map.removeMarker(markerIter.next());
+							}*/
+						tran.setDep_addr(from);
+						tran.setArr_addr(to);
+						testAPI(from,to);
+					}
 					
 				}
 			});
@@ -117,6 +144,7 @@ public class FourthStepView extends VerticalLayout{
 	
 	private void testAPI(String from, String to)
 		{
+		transferComplete=false;
 		lastPoint=-1;
 		GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyBA-NgbRwnecHN3cApbnZoaCZH0ld66fT4");
 		DirectionsResult results=null;
@@ -137,7 +165,15 @@ public class FourthStepView extends VerticalLayout{
 				/////////////////TEST GEOJSON/////////////////
 				
 				
-				System.out.println(toJson(list));
+				System.out.println(testJson(list));
+				tran.setPath(testJson(list));
+				LatLng source =list.get(0);
+				LatLng destination = list.get(list.size()-1);
+				tran.setDep_gps(new Point2D.Double(source.lat,source.lng));
+				tran.setArr_gps(new Point2D.Double(destination.lat, destination.lng));
+				tran.setDep_time(System.currentTimeMillis()+3600000);
+				UI.getCurrent().getSession().setAttribute(Transfer.class, tran);
+				transferComplete=true;
 				/////////////////////////////////////////////
 				ArrayList<LatLon> points = new ArrayList<LatLon>();
 				
@@ -247,6 +283,19 @@ public class FourthStepView extends VerticalLayout{
 		
 		}
 	
+	public JsonObject testJson(List<LatLng> list)
+		{
+			Gson gson = new GsonBuilder().create();
+			JsonArray myCustomArray = gson.toJsonTree(list).getAsJsonArray();
+	        JsonObject jsonObject = new JsonObject();
+	        jsonObject.add("path", myCustomArray);
+	        return jsonObject;
+		}
+	public boolean isFormCompleted()
+		{
+		 return transferComplete;
+		}
+	
 	public String toJson(List<LatLng> list){
 		  JsonObject featureCollection = new JsonObject();
 		  featureCollection.addProperty("type", "FeatureCollection");
@@ -276,6 +325,8 @@ public class FourthStepView extends VerticalLayout{
 			     // jsonCoord.addProperty("1", eachElement.lat);
 			      String lng =new Double(eachElement.lng).toString();
 			      String lat = new Double(eachElement.lat).toString();
+			      JsonPrimitive lngPrim = new JsonPrimitive("portanna");
+
 			      JSONArrayCoord.add(new JsonPrimitive(lng));
 			      JSONArrayCoord.add(new JsonPrimitive(lat));
 			      
