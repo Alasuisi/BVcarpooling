@@ -8,8 +8,8 @@ import java.sql.Timestamp;
 import org.postgresql.util.PGobject;
 import org.postgresql.geometric.PGpoint;
 
-import com.bonvojage.utils.DbConnector;
-import com.bonvoyaje.domain.Transfer;
+import com.bonvoyage.domain.Transfer;
+import com.bonvoyage.utils.DbConnector;
 
 
 

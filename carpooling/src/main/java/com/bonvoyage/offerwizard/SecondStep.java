@@ -1,15 +1,15 @@
-package com.bonvojage.offerwizard;
+package com.bonvoyage.offerwizard;
 
 import org.vaadin.teemu.wizards.WizardStep;
 
-import com.bonvojage.carpooling.CarpoolingUI;
+import com.bonvoyage.carpooling.CarpoolingUI;
+import com.bonvoyage.domain.Transfer;
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
-import com.bonvoyaje.domain.Transfer;
 
 public class SecondStep implements WizardStep{
 

@@ -1,4 +1,4 @@
-package com.bonvojage.offerwizard;
+package com.bonvoyage.offerwizard;
 
 
 import java.awt.geom.Point2D;
@@ -7,8 +7,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.bonvojage.utils.BvStringUtils;
-import com.bonvoyaje.domain.Transfer;
+import com.bonvoyage.domain.Transfer;
+import com.bonvoyage.utils.BvStringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;

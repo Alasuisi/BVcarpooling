@@ -1,9 +1,9 @@
-package com.bonvojage.offerwizard;
+package com.bonvoyage.offerwizard;
 
-import com.bonvojage.carpooling.CarpoolingUI;
-import com.bonvojage.designs.OfferThirdStepDesign;
-import com.bonvojage.utils.BvStringUtils;
-import com.bonvoyaje.domain.Transfer;
+import com.bonvoyage.carpooling.CarpoolingUI;
+import com.bonvoyage.designs.OfferThirdStepDesign;
+import com.bonvoyage.domain.Transfer;
+import com.bonvoyage.utils.BvStringUtils;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.Alignment;

@@ -5,9 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.bonvojage.utils.DaoException;
-import com.bonvojage.utils.DbConnector;
-import com.bonvoyaje.domain.User;
+import com.bonvoyage.domain.User;
+import com.bonvoyage.utils.DaoException;
+import com.bonvoyage.utils.DbConnector;
 
 import elemental.json.Json;
 import elemental.json.JsonObject;

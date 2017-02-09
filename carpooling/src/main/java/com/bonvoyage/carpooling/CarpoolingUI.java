@@ -1,4 +1,4 @@
-package com.bonvojage.carpooling;
+package com.bonvoyage.carpooling;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -7,9 +7,9 @@ import java.util.Locale;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.bonvojage.utils.DaoException;
+import com.bonvoyage.domain.User;
 import com.bonvoyage.persistance.UserDAO;
-import com.bonvoyaje.domain.User;
+import com.bonvoyage.utils.DaoException;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.FontAwesome;

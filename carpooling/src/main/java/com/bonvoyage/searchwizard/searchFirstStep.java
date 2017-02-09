@@ -1,21 +1,23 @@
-package com.bonvojage.offerwizard;
+package com.bonvoyage.searchwizard;
 
 import org.vaadin.teemu.wizards.WizardStep;
 
+import com.bonvoyage.carpooling.CarpoolingUI;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.UI;
 
-public class FourthStep implements WizardStep {
+public class searchFirstStep implements WizardStep{
 
 	@Override
 	public String getCaption() {
-		// TODO Auto-generated method stub
-		return "Trip route";
+		
+		return "Departure and destination";
 	}
 
 	@Override
 	public Component getContent() {
-		// TODO Auto-generated method stub
-		return new FourthStepView();
+		CarpoolingUI ui =(CarpoolingUI) UI.getCurrent();
+		return new searchFirstStepView(ui);
 	}
 
 	@Override

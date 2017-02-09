@@ -1,4 +1,4 @@
-package com.bonvoyaje.domain;
+package com.bonvoyage.domain;
 
 import elemental.json.JsonObject;
 

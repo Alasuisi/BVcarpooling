@@ -1,4 +1,4 @@
-package com.bonvojage.carpooling;
+package com.bonvoyage.carpooling;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
@@ -10,18 +10,19 @@ import java.util.Date;
 
 import org.vaadin.teemu.wizards.Wizard;
 
-import com.bonvojage.designs.Landpage;
-import com.bonvojage.offerwizard.FirstStep;
-import com.bonvojage.offerwizard.FourthStep;
-import com.bonvojage.offerwizard.SecondStep;
-import com.bonvojage.offerwizard.ThirdStep;
-import com.bonvojage.utils.BvStringUtils;
-import com.bonvojage.utils.DaoException;
-import com.bonvojage.utils.DbConnector;
+import com.bonvoyage.designs.Landpage;
+import com.bonvoyage.domain.Transfer;
+import com.bonvoyage.domain.User;
+import com.bonvoyage.offerwizard.FirstStep;
+import com.bonvoyage.offerwizard.FourthStep;
+import com.bonvoyage.offerwizard.SecondStep;
+import com.bonvoyage.offerwizard.ThirdStep;
 import com.bonvoyage.persistance.TransferDAO;
 import com.bonvoyage.persistance.UserDAO;
-import com.bonvoyaje.domain.Transfer;
-import com.bonvoyaje.domain.User;
+import com.bonvoyage.searchwizard.searchFirstStep;
+import com.bonvoyage.utils.BvStringUtils;
+import com.bonvoyage.utils.DaoException;
+import com.bonvoyage.utils.DbConnector;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.vaadin.data.Item;
@@ -150,12 +151,52 @@ public WelcomeView(CarpoolingUI ui)
 	
 	searchRideBtn.addClickListener(new Button.ClickListener() {
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2489390320156663464L;
+
+		@Override
+		public void buttonClick(ClickEvent event) {
+			Window subWindow = new Window("Search trip Wizard");
+			subWindow.center();
+			subWindow.setImmediate(true);
+			subWindow.addStyleName("animated");
+			//subWindow.addStyleName("delay05");
+			subWindow.addStyleName("zoomInLeft");
+			Wizard myWizard = new Wizard();
+			myWizard.addStep(new searchFirstStep());
+			
+			myWizard.getFinishButton().addClickListener(new Button.ClickListener() {
+				
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -7503617608417852323L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			myWizard.setSizeFull();
+			subWindow.setContent(myWizard);
+			subWindow.setWidth("800px");
+			subWindow.setHeight("600px");
+			UI.getCurrent().addWindow(subWindow);
+			
+		}
+	});
+	
+	/*searchRideBtn.addClickListener(new Button.ClickListener() {
+		
 		@Override
 		public void buttonClick(ClickEvent event) {
 			try {
-				if(UI.getCurrent().getSession().getAttribute("userid")!=null)
+				if(UI.getCurrent().getSession().getAttribute(User.class)!=null)
 					{
-					Integer key=Integer.parseInt((String)UI.getCurrent().getSession().getAttribute("userid"));
+					Integer key=UI.getCurrent().getSession().getAttribute(User.class).getUserID();
 					User loggedUser = UserDAO.load(key.intValue());
 					UI.getCurrent().getSession().setAttribute(User.class, loggedUser);
 					System.out.println("key in session is:"+key.intValue());
@@ -176,36 +217,9 @@ public WelcomeView(CarpoolingUI ui)
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			/*
-			DbConnector conn = new DbConnector();
-			Connection c=conn.connect();
-			Statement stmt = null;
-			
-			try {
-				stmt = c.createStatement();
-				ResultSet rs = stmt.executeQuery( "SELECT * FROM user_query;" );
-				 while ( rs.next() ) {
-			            int id = rs.getInt("user_id");
-			            String  address = rs.getString("source_location_address");
-			            int queryid  = rs.getInt("query_id");
-			            String  destaddress = rs.getString("destination_location_address");
-			            System.out.println( "ID = " + id );
-			            System.out.println( "SOURCE = " + address );
-			            System.out.println( "AGE = " + queryid );
-			            System.out.println( "DESTINATION = " + destaddress );
-			            System.out.println();
-			         }
-			         rs.close();
-			         stmt.close();
-			         conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
 			
 		}
-	});
+	});*/
 	
 	Button testbutton = new Button("test transfer insert");
 	super.buttonsLayout.addComponent(testbutton);

@@ -1,4 +1,4 @@
-package com.bonvojage.utils;
+package com.bonvoyage.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -40,7 +40,7 @@ public class DbConnector {
 	
 	Connection con;
 	Session session;
-	int nLocalPort = 6666;
+	int nLocalPort = 6000;
 	private static void doSshTunnel( String strSshUser, String strSshPassword, String strSshHost, int nSshPort, String strRemoteHost, int nLocalPort, int nRemotePort ) throws JSchException
 	  {
 	    final JSch jsch = new JSch();
@@ -50,9 +50,19 @@ public class DbConnector {
 	    final Properties config = new Properties();
 	    config.put( "StrictHostKeyChecking", "no" );
 	    session.setConfig( config );
-	     
+	    
+	    //session.disconnect();
+	   //	session.delPortForwardingL(nLocalPort);
+	    //session.delPortForwardingL(nLocalPort);
 	    session.connect();
 	    session.setPortForwardingL(nLocalPort, strRemoteHost, nRemotePort);
+	    /*try{
+	    	session.setPortForwardingL(nLocalPort, strRemoteHost, nRemotePort);
+	    	System.out.println("SSH tunnel initialized on local port: "+nLocalPort);
+	    	}catch(JSchException ex)
+	    	{
+	    		doSshTunnel(strSshUser,strSshPassword,strSshHost,nSshPort,strRemoteHost,nLocalPort+1,nRemotePort);
+	    	}*/
 	  }
 	   
 	  public Connection connect()
@@ -70,8 +80,12 @@ public class DbConnector {
 	                                      // local port number use to bind SSH tunnel
 	    		int nRemotePort = 5432;                               // remote port number of your database 
 	      
-	       
-	    		doSshTunnel(strSshUser, strSshPassword, strSshHost, nSshPort, strRemoteHost, nLocalPort, nRemotePort);
+	    		try{
+	    			doSshTunnel(strSshUser, strSshPassword, strSshHost, nSshPort, strRemoteHost, nLocalPort, nRemotePort);
+	    			}catch(JSchException e)
+	    				{
+	    				System.out.println(e.getMessage()+"This may result of a still opened connection, if you happen to republish the app without restarting the server, usually you can ignore this message if all seems working normally");
+	    				}
 	    		UI.getCurrent().getSession().setAttribute("tunnel", true);
 	    	}
 	    	try{ 

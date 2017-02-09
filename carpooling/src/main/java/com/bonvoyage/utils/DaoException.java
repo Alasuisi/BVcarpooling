@@ -1,4 +1,4 @@
-package com.bonvojage.utils;
+package com.bonvoyage.utils;
 
 public class DaoException extends Exception {
 

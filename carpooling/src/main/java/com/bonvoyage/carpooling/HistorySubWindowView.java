@@ -1,9 +1,9 @@
-package com.bonvojage.carpooling;
+package com.bonvoyage.carpooling;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.bonvojage.designs.HistorySubWindowDesign;
+import com.bonvoyage.designs.HistorySubWindowDesign;
 import com.vaadin.data.Item;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;

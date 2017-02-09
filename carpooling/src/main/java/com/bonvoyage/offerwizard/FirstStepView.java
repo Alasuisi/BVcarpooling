@@ -1,10 +1,10 @@
-package com.bonvojage.offerwizard;
+package com.bonvoyage.offerwizard;
 
-import com.bonvojage.carpooling.CarpoolingUI;
-import com.bonvojage.designs.OfferFirstStep;
-import com.bonvojage.utils.BvStringUtils;
-import com.bonvoyaje.domain.Transfer;
-import com.bonvoyaje.domain.User;
+import com.bonvoyage.carpooling.CarpoolingUI;
+import com.bonvoyage.designs.OfferFirstStep;
+import com.bonvoyage.domain.Transfer;
+import com.bonvoyage.domain.User;
+import com.bonvoyage.utils.BvStringUtils;
 import com.google.gson.JsonObject;
 import com.vaadin.ui.UI;
 

@@ -1,9 +1,9 @@
-package com.bonvojage.offerwizard;
+package com.bonvoyage.offerwizard;
 
 import org.vaadin.teemu.wizards.WizardStep;
 
-import com.bonvojage.carpooling.CarpoolingUI;
-import com.bonvoyaje.domain.Transfer;
+import com.bonvoyage.carpooling.CarpoolingUI;
+import com.bonvoyage.domain.Transfer;
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.Component;

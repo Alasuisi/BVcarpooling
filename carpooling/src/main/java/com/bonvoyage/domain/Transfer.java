@@ -1,4 +1,4 @@
-package com.bonvoyaje.domain;
+package com.bonvoyage.domain;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;

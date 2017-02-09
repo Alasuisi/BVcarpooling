@@ -1,4 +1,4 @@
-package com.bonvojage.utils;
+package com.bonvoyage.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
