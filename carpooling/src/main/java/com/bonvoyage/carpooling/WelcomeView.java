@@ -20,6 +20,8 @@ import com.bonvoyage.offerwizard.ThirdStep;
 import com.bonvoyage.persistance.TransferDAO;
 import com.bonvoyage.persistance.UserDAO;
 import com.bonvoyage.searchwizard.searchFirstStep;
+import com.bonvoyage.searchwizard.searchSecondStep;
+import com.bonvoyage.searchwizard.searchThirdStep;
 import com.bonvoyage.utils.BvStringUtils;
 import com.bonvoyage.utils.DaoException;
 import com.bonvoyage.utils.DbConnector;
@@ -166,6 +168,8 @@ public WelcomeView(CarpoolingUI ui)
 			subWindow.addStyleName("zoomInLeft");
 			Wizard myWizard = new Wizard();
 			myWizard.addStep(new searchFirstStep());
+			myWizard.addStep(new searchSecondStep());
+			myWizard.addStep(new searchThirdStep());
 			
 			myWizard.getFinishButton().addClickListener(new Button.ClickListener() {
 				

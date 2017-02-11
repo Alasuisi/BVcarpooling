@@ -16137,6 +16137,7 @@ div.v-layout.v-horizontal.v-widget {
 	border-right-color: #38DD7C;
 }
 
-.bvtheme .set_backgroud {
-	background: url(http://www.dailypicsupdate.com/wp-content/uploads/2013/03/trip-auto-amizing-desktop-background.jpg);
+.bvtheme .search_background {
+	background-image: url(http://bsnscb.com/data/out/209/39316311-voyage-wallpapers.jpeg);
+	background-size: cover;
 }
