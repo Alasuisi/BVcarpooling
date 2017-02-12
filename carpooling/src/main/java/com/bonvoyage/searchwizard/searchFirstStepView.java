@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.bonvoyage.carpooling.CarpoolingUI;
 import com.bonvoyage.domain.Transfer;
-import com.bonvoyage.domain.User;
+import com.bonvoyage.domain.UserProfile;
 import com.bonvoyage.utils.BvStringUtils;
 import com.bonvoyage.utils.GeocodingUtils;
 import com.google.gson.JsonObject;
@@ -36,7 +36,7 @@ public class searchFirstStepView extends VerticalLayout{
 	private TextField departureField = new TextField();
 	private TextField arrivalField = new TextField();
 	private DateField departureTime = new DateField();
-	private User loggedUser = (User) UI.getCurrent().getSession().getAttribute(User.class);
+	private UserProfile loggedUser = (UserProfile) UI.getCurrent().getSession().getAttribute(UserProfile.class);
 	private Transfer searchTran = new Transfer();
 	
 	public searchFirstStepView(CarpoolingUI ui)

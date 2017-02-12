@@ -27,7 +27,7 @@ public class searchThirdStep implements WizardStep{
 	@Override
 	public boolean onBack() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }

@@ -2,7 +2,7 @@ package com.bonvoyage.domain;
 
 import elemental.json.JsonObject;
 
-public class User {
+public class UserProfile {
 	private int profileID;
 	private int userID;
 	private JsonObject ntransit;
@@ -19,7 +19,7 @@ public class User {
 	private JsonObject scorepolicy;
 	
 	
-	public User(){};
+	public UserProfile(){};
 	
 	
 	public JsonObject getPricerange() {
@@ -125,7 +125,7 @@ public class User {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		User other = (User) obj;
+		UserProfile other = (UserProfile) obj;
 		if (userID != other.userID)
 			return false;
 		return true;

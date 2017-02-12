@@ -12,7 +12,7 @@ import org.vaadin.teemu.wizards.Wizard;
 
 import com.bonvoyage.designs.Landpage;
 import com.bonvoyage.domain.Transfer;
-import com.bonvoyage.domain.User;
+import com.bonvoyage.domain.UserProfile;
 import com.bonvoyage.offerwizard.FirstStep;
 import com.bonvoyage.offerwizard.FourthStep;
 import com.bonvoyage.offerwizard.SecondStep;
@@ -34,12 +34,12 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-
-
-
+import com.vaadin.ui.Accordion;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Window.CloseEvent;
 
 public class WelcomeView extends Landpage {
 /**
@@ -48,12 +48,25 @@ public class WelcomeView extends Landpage {
 	private static final long serialVersionUID = 4387692572453769971L;
 private CarpoolingUI ui;
 private HistorySubWindowView subwin =new HistorySubWindowView(ui);
-private User loggedUser = null;
+private UserProfile loggedUser = null;
+private Accordion content = new Accordion();
+private VerticalLayout testLay = new VerticalLayout();
+private Label testLab = new Label("BLA BLA BLA");
+private VerticalLayout testLay2 = new VerticalLayout();
+private Label testLab2 = new Label("BLA BLA BLA");
 
 
 public WelcomeView(CarpoolingUI ui)
 	{
 	this.ui=ui;
+	super.rightSplitVertical.setSizeFull();
+	super.leftSplitVertical.setSizeFull();
+	super.buttonsLayout.setHeight("133px");
+	super.mainLogo.addStyleName("animated");
+	super.mainLogo.addStyleName("tada");
+	super.leftSplitVertical.addStyleName("animated");
+	super.leftSplitVertical.addStyleName("bounceInLeft");
+	super.leftSplitVertical.addStyleName("delay15");
 	
 	setTitle("Carpooling service interface");
 	offerRideBtn.setHtmlContentAllowed(true);
@@ -80,6 +93,21 @@ public WelcomeView(CarpoolingUI ui)
     demoTrip.setContentMode(ContentMode.HTML);
     Date demoWhen = new Date(System.currentTimeMillis());
 	addUserHistoryItem(demoTrip,demoWhen);
+	
+	
+	/////test content portion fo the welcomepage
+	super.rightSplitVertical.addComponent(content);
+	testLay.setSizeFull();
+	testLay.addComponent(testLab);
+	testLay2.addComponent(testLab2);
+	content.addTab(testLay,"test1");
+	content.addTab(testLay2, "test2");
+	content.addStyleName("animated");
+	content.addStyleName("rotateInUpRight");
+	content.addStyleName("delay15");
+	
+	///////////////////////////////////////////////
+	
 	
 	userHistory.addItemClickListener(new ItemClickEvent.ItemClickListener() {
 		
@@ -117,7 +145,7 @@ public WelcomeView(CarpoolingUI ui)
 			subWindow.setImmediate(true);
 			subWindow.addStyleName("animated");
 			//subWindow.addStyleName("delay05");
-			subWindow.addStyleName("zoomInLeft");
+			subWindow.addStyleName("pulse");
 			Wizard myWizard = new Wizard();
 			myWizard.addStep(new FirstStep());
 			myWizard.addStep(new SecondStep());
@@ -140,6 +168,20 @@ public WelcomeView(CarpoolingUI ui)
 					}
 					subWindow.close();
 					
+				}
+			});
+			myWizard.getCancelButton().addClickListener(new Button.ClickListener() {
+				
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -8280582140236466557L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					
+					subWindow.close();
+						
 				}
 			});
 			myWizard.setSizeFull();
@@ -180,10 +222,31 @@ public WelcomeView(CarpoolingUI ui)
 
 				@Override
 				public void buttonClick(ClickEvent event) {
-					// TODO Auto-generated method stub
+					try {
+						TransferDAO.insert((Transfer) UI.getCurrent().getSession().getAttribute("search_tran"));
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					subWindow.close();
 					
 				}
 			});
+			myWizard.getCancelButton().addClickListener(new Button.ClickListener() {
+				
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -3305823179945029197L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					subWindow.close();
+					UI.getCurrent().getSession().setAttribute("search_tran", null);
+					
+				}
+			});
+
 			myWizard.setSizeFull();
 			subWindow.setContent(myWizard);
 			subWindow.setWidth("800px");
@@ -225,13 +288,12 @@ public WelcomeView(CarpoolingUI ui)
 		}
 	});*/
 	
+	/*
 	Button testbutton = new Button("test transfer insert");
 	super.buttonsLayout.addComponent(testbutton);
 	testbutton.addClickListener(new Button.ClickListener() {
 		
-		/**
-		 * 
-		 */
+		
 		private static final long serialVersionUID = -8978462989992476953L;
 
 		@Override
@@ -278,6 +340,7 @@ public WelcomeView(CarpoolingUI ui)
 			
 		}
 	});
+	*/
 	}
 
 		
@@ -302,6 +365,9 @@ public void addUserHistoryItem(Label trip,Date date)
 public void setTitle(String title)
 	{
 	titleLable.setValue(BvStringUtils.bvColorizeWord(title));
+	titleLable.addStyleName("animated");
+	titleLable.addStyleName("bounceInRight");
+	titleLable.addStyleName("delay025");
 	//titleLable.setValue("<font color=#ff0000>p</font><font color=#df5d1f>o</font><font color=#bfad3f>r</font><font color=#9fe65f>t</font><font color=#7ffe7f>a</font><font color=#5ff39f>n</font><font color=#3fc6bf>n</font><font color=#1f7ddf>a</font></a>");
 	}
 public HistorySubWindowView getHistoryItemSubWindow()

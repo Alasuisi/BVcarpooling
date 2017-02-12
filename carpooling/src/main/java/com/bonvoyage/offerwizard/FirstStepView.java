@@ -3,7 +3,7 @@ package com.bonvoyage.offerwizard;
 import com.bonvoyage.carpooling.CarpoolingUI;
 import com.bonvoyage.designs.OfferFirstStep;
 import com.bonvoyage.domain.Transfer;
-import com.bonvoyage.domain.User;
+import com.bonvoyage.domain.UserProfile;
 import com.bonvoyage.utils.BvStringUtils;
 import com.google.gson.JsonObject;
 import com.vaadin.ui.UI;
@@ -17,7 +17,7 @@ public class FirstStepView extends OfferFirstStep{
 	
 public FirstStepView(CarpoolingUI ui){
 	this.ui=ui;
-	User loggedUser = UI.getCurrent().getSession().getAttribute(User.class);
+	UserProfile loggedUser = UI.getCurrent().getSession().getAttribute(UserProfile.class);
 	Transfer tran = new Transfer();
 	JsonObject user_role = new JsonObject();
 	user_role.addProperty("role", "driver");

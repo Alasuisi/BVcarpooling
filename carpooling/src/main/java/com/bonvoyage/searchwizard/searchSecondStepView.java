@@ -27,11 +27,13 @@ public class searchSecondStepView extends VerticalLayout {
 	private Label animalLabel = new Label();
 	private Label smokeLabel = new Label();
 	private Label handicapLabel = new Label();
+	private Label luggageLabel = new Label();
 	private Label sliderLabel = new Label();
 	private HorizontalLayout seatsLayout = new HorizontalLayout();
 	private HorizontalLayout animalLayout = new HorizontalLayout();
 	private HorizontalLayout smokeLayout = new HorizontalLayout();
 	private HorizontalLayout handicapLayout = new HorizontalLayout();
+	private HorizontalLayout luggageLayout = new HorizontalLayout();
 	//private ComboBox seatsCombo = new ComboBox();
 	private Slider seatsSlider = new Slider();
 	private CheckBox animalCheck = new CheckBox();
@@ -44,7 +46,7 @@ public class searchSecondStepView extends VerticalLayout {
 		{
 		 this.setSizeFull();
 		 this.setMargin(true);
-		 this.addComponents(titleLabel,subtitleLabel,seatsLayout,animalLayout,smokeLayout,handicapLayout);
+		 this.addComponents(titleLabel,subtitleLabel,seatsLayout,animalLayout,smokeLayout,handicapLayout,luggageLayout);
 		 titleLabel.setContentMode(ContentMode.HTML);
 		 titleLabel.setValue(BvStringUtils.bvColorizeWord("Please select your special needs, if any"));
 		 titleLabel.setSizeUndefined();
@@ -57,6 +59,7 @@ public class searchSecondStepView extends VerticalLayout {
 		 this.setComponentAlignment(animalLayout, Alignment.TOP_CENTER);
 		 this.setComponentAlignment(smokeLayout, Alignment.TOP_CENTER);
 		 this.setComponentAlignment(handicapLayout, Alignment.TOP_CENTER);
+		 this.setComponentAlignment(luggageLayout, Alignment.TOP_CENTER);
 		 
 		 seatsLayout.setWidth("80%");
 		 seatsLayout.addComponents(seatsLabel,seatsSlider,sliderLabel);
@@ -188,6 +191,38 @@ public class searchSecondStepView extends VerticalLayout {
 						handicapCheck.setCaption("No");
 						searchTran.setHandicap(false);
 					}
+				
+			}
+		});
+		
+		luggageLayout.setWidth("80%");
+		luggageLayout.addComponents(luggageLabel,luggageCheck);
+		luggageLayout.setSpacing(true);
+		luggageLayout.setComponentAlignment(luggageLabel, Alignment.MIDDLE_LEFT);
+		luggageLayout.setComponentAlignment(luggageCheck, Alignment.MIDDLE_CENTER);
+		luggageLabel.setValue("Do you travel with luggage?");
+		luggageLabel.setDescription("Items as big to fit in the car booth are considered luggage, handbags aren't");
+		luggageCheck.setImmediate(true);
+		luggageCheck.setCaption("No");
+		luggageCheck.addValueChangeListener(new Property.ValueChangeListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 3253329078273576438L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				boolean value = luggageCheck.getValue();
+				if(value)
+					{
+					 luggageCheck.setCaption("Yes");
+					 searchTran.setLuggage(true);
+					}else
+						{
+						luggageCheck.setCaption("No");
+						searchTran.setLuggage(false);
+						}
 				
 			}
 		});

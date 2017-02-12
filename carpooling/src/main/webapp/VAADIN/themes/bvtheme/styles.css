@@ -16066,6 +16066,11 @@ div.v-layout.v-horizontal.v-widget {
 	animation-delay: 1s;
 }
 
+.bvtheme .dekay025 {
+	-webkit-animation-delay: 0.25s;
+	animation-delay: 0.25s;
+}
+
 .bvtheme .delay05 {
 	-webkit-animation-delay: 0.5s;
 	animation-delay: 0.5s;
@@ -16112,12 +16117,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .bvtheme .delay15 {
-	-webkit-animation-delay: 1.2s;
+	-webkit-animation-delay: 1.5s;
 	animation-delay: 1.5s;
 }
 
 .bvtheme .delay20 {
-	-webkit-animation-delay: 1.2s;
+	-webkit-animation-delay: 2s;
 	animation-delay: 2s;
 }
 

@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.bonvoyage.domain.User;
+import com.bonvoyage.domain.UserProfile;
 import com.bonvoyage.persistance.UserDAO;
 import com.bonvoyage.utils.DaoException;
 import com.vaadin.annotations.Theme;
@@ -59,11 +59,11 @@ public class CarpoolingUI extends UI {
         		//test.setUserName(user);
         		//UI.getCurrent().getSession().setAttribute("userid", vaadinRequest.getParameter("key"));
         		//Integer key=Integer.parseInt((String)UI.getCurrent().getSession().getAttribute("userid"));
-				User loggedUser;
+				UserProfile loggedUser;
 				try {
 					loggedUser = UserDAO.load(Integer.parseInt(user));
 					test.setUserName(new Integer(loggedUser.getUserID()).toString());
-					UI.getCurrent().getSession().setAttribute(User.class, loggedUser);
+					UI.getCurrent().getSession().setAttribute(UserProfile.class, loggedUser);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

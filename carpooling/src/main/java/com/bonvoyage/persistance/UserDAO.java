@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.bonvoyage.domain.User;
+import com.bonvoyage.domain.UserProfile;
 import com.bonvoyage.utils.DaoException;
 import com.bonvoyage.utils.DbConnector;
 
@@ -21,12 +21,12 @@ public class UserDAO {
 	 * 
 	 */
 	private static final String GET_USER_BY_ID = "SELECT * FROM user_profile Where user_id=?";
-	public static User load(int userid) throws SQLException, DaoException
+	public static UserProfile load(int userid) throws SQLException, DaoException
 		{
 		 Connection con=null;
 		 PreparedStatement pstm=null;
 		 ResultSet rs=null;
-		 User result=null;
+		 UserProfile result=null;
 		 DbConnector manager = new DbConnector();
 		 con=manager.connect();
 		 pstm=con.prepareStatement(GET_USER_BY_ID);
@@ -55,7 +55,7 @@ public class UserDAO {
 			 	}
 			 
 			
-			 result= new User();
+			 result= new UserProfile();
 			 result.setUserID(id);
 			 result.setProfileID(profid);
 			 result.setNtransit(tnodes);
