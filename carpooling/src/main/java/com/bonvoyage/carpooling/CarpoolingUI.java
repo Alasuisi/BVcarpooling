@@ -38,43 +38,17 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("bvtheme")
 public class CarpoolingUI extends UI {
 
-    @Override
-    protected void init(VaadinRequest vaadinRequest) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1602235954991514026L;
 
-        final VerticalLayout layout = new VerticalLayout();
-        
-       // final TextField name = new TextField();
-        //name.setCaption("Type your name here:");
-        WelcomeView test = new WelcomeView(this);
-        test.setUserName("This guy");
-        test.addStyleName("set_background");
-        layout.addComponent(test);
-        layout.setMargin(true);
-        layout.setSpacing(true);
-        layout.addStyleName("set_background");
-        System.out.println(vaadinRequest.getParameter("key"));
-        String user = vaadinRequest.getParameter("key");
-        if(user!=null) 
-        	{
-        		//test.setUserName(user);
-        		//UI.getCurrent().getSession().setAttribute("userid", vaadinRequest.getParameter("key"));
-        		//Integer key=Integer.parseInt((String)UI.getCurrent().getSession().getAttribute("userid"));
-				UserProfile loggedUser;
-				try {
-					loggedUser = UserDAO.load(Integer.parseInt(user));
-					test.setUserName(new Integer(loggedUser.getUserID()).toString());
-					UI.getCurrent().getSession().setAttribute(UserProfile.class, loggedUser);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (DaoException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-        	}
-        setContent(layout);
-        VaadinSession.getCurrent().addRequestHandler(new RequestHandler(){
+
+
+	@Override
+    protected void init(VaadinRequest vaadinRequest) {
+    	
+    	VaadinSession.getCurrent().addRequestHandler(new RequestHandler(){
 
 			/**
 			 * 
@@ -95,11 +69,47 @@ public class CarpoolingUI extends UI {
 		            // Use shared session data
 		            response.getWriter().format("Session data: %s\n",
 		                session.getAttribute("mydata"));
-
+		            System.out.println("Portanna");
 		            return true; // We wrote a response
 		        } else
 		            return false; // No response was written
 			}});
+
+        final VerticalLayout layout = new VerticalLayout();
+        
+       // final TextField name = new TextField();
+        //name.setCaption("Type your name here:");
+        WelcomeView test = new WelcomeView(this);
+        test.setUserName("This guy");
+        test.addStyleName("set_background");
+        layout.addComponent(test);
+        layout.setMargin(true);
+        layout.setSpacing(true);
+        layout.addStyleName("set_background");
+        System.out.println(vaadinRequest.getParameter("key"));
+        String user = vaadinRequest.getParameter("key");
+        //System.getProperties().list(System.out);
+        if(user!=null) 
+        	{
+        		//test.setUserName(user);
+        		//UI.getCurrent().getSession().setAttribute("userid", vaadinRequest.getParameter("key"));
+        		//Integer key=Integer.parseInt((String)UI.getCurrent().getSession().getAttribute("userid"));
+				UserProfile loggedUser;
+				try {
+					loggedUser = UserDAO.load(Integer.parseInt(user));
+					test.setUserName(new Integer(loggedUser.getUserID()).toString());
+					UI.getCurrent().getSession().setAttribute(UserProfile.class, loggedUser);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (DaoException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+        	}
+        setContent(layout);
+        
     }
     
     

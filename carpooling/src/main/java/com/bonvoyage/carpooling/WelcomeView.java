@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.vaadin.teemu.wizards.Wizard;
 
@@ -61,7 +63,7 @@ public WelcomeView(CarpoolingUI ui)
 	this.ui=ui;
 	super.rightSplitVertical.setSizeFull();
 	super.leftSplitVertical.setSizeFull();
-	super.buttonsLayout.setHeight("133px");
+	super.buttonsLayout.setHeight("130px");
 	super.mainLogo.addStyleName("animated");
 	super.mainLogo.addStyleName("tada");
 	super.leftSplitVertical.addStyleName("animated");
@@ -103,8 +105,21 @@ public WelcomeView(CarpoolingUI ui)
 	content.addTab(testLay,"test1");
 	content.addTab(testLay2, "test2");
 	content.addStyleName("animated");
-	content.addStyleName("rotateInUpRight");
+	content.addStyleName("fadeInUpBig");
 	content.addStyleName("delay15");
+	try {
+		UserProfile thisUser =UI.getCurrent().getSession().getAttribute(UserProfile.class);
+		LinkedList<Transfer> test = TransferDAO.readMyOfferings(thisUser);
+		Iterator<Transfer> iter = test.iterator();
+		while(iter.hasNext())
+			{
+			 Transfer toPrint = iter.next();
+			 System.out.println(toPrint.toString());
+			}
+	} catch (SQLException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
 	
 	///////////////////////////////////////////////
 	

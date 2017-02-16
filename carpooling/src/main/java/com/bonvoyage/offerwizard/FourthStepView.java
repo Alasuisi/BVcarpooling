@@ -2,6 +2,7 @@ package com.bonvoyage.offerwizard;
 
 
 import java.awt.geom.Point2D;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -9,12 +10,16 @@ import java.util.List;
 
 import com.bonvoyage.domain.Transfer;
 import com.bonvoyage.utils.BvStringUtils;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.stream.JsonReader;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -42,6 +47,11 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+
+import elemental.json.Json;
+
+
+
 
 public class FourthStepView extends VerticalLayout{
 	/**
@@ -165,8 +175,10 @@ public class FourthStepView extends VerticalLayout{
 				/////////////////TEST GEOJSON/////////////////
 				
 				
-				System.out.println(testJson(list));
+				System.out.println("testJson"+testJson(list));
 				tran.setPath(testJson(list));
+				
+				
 				LatLng source =list.get(0);
 				LatLng destination = list.get(list.size()-1);
 				tran.setDep_gps(new Point2D.Double(source.lat,source.lng));

@@ -1,5 +1,6 @@
 package com.bonvoyage.persistance;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +15,7 @@ import elemental.json.JsonObject;
 
 
 
-public class UserDAO {
+public class UserDAO implements Serializable{
 
 	
 	/*Sql statement for obtaining an instance of User, reading from table user_profile

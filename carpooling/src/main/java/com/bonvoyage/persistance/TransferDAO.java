@@ -1,19 +1,27 @@
 package com.bonvoyage.persistance;
 
+import java.awt.geom.Point2D;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.LinkedList;
 
 import org.postgresql.util.PGobject;
 import org.postgresql.geometric.PGpoint;
 
 import com.bonvoyage.domain.Transfer;
+import com.bonvoyage.domain.UserProfile;
 import com.bonvoyage.utils.DbConnector;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 
 
-public class TransferDAO {
+public class TransferDAO implements Serializable{
 	
 		/*private static final String INSERT_TRANSFER = "INSERT INTO Transfer(\"Transfer_ID\",\"User_ID\",\"Profile_ID\",\"Class_ID\",\"Reservation_ID\",\"Pool_ID\",\"User_Role\",\"Departure_Address\",\"Arrival_Address\",\"Departure_GPS\","
 																			+ "\"Arrival_GPS\",\"Departure_Time\",\"Type\",\"Occupied_Seats\",\"Available_Seats\",\"Animal\",\"Handicap\",\"Smoke\",\"Luggage\",\"Status\",\"Price\",\"Path\")"
@@ -72,6 +80,71 @@ public class TransferDAO {
 			con.commit();
 			con.close();
 		}
+		
+		private static String READ_MY_OFFERINGS="Select * from Transfer WHERE \"User_ID\"=?";
+		public static LinkedList<Transfer> readMyOfferings(UserProfile user) throws SQLException
+			{
+			Connection con = null;
+			PreparedStatement pstm = null;
+			ResultSet rs=null;
+			LinkedList<Transfer> result = null;
+			DbConnector manager = new DbConnector();
+			con = manager.connect();
+			pstm=con.prepareStatement(READ_MY_OFFERINGS);
+			pstm.setInt(1, user.getUserID());
+			rs=pstm.executeQuery();
+			if(rs.isBeforeFirst())
+				{
+				rs.next();
+				result = new LinkedList<Transfer>();
+				while(!rs.isAfterLast())
+					{
+					 Transfer toAdd = new Transfer();
+					 toAdd.setTran_id(rs.getInt(1));
+					 toAdd.setUser_id(rs.getInt(2));
+					 toAdd.setProf_id(rs.getInt(3));
+					 toAdd.setClass_id(rs.getShort(4));
+					 toAdd.setReser_id(rs.getInt(5));
+					 toAdd.setPool_id(rs.getInt(6));
+					 
+					 String roleString = rs.getString(7);
+					 Gson gson = new GsonBuilder().create();
+					 JsonObject roleJson = gson.toJsonTree(roleString, String.class).getAsJsonObject();
+					 
+					 toAdd.setUser_role(roleJson);
+					 toAdd.setDep_addr(rs.getString(8));
+					 toAdd.setArr_addr(rs.getString(9));
+					 PGpoint depGps = new PGpoint(rs.getString(10));
+					 Point2D depPoint = new Point2D.Double(depGps.x, depGps.y);
+					 toAdd.setDep_gps(depPoint);
+					 PGpoint arrGps = new PGpoint(rs.getString(11));
+					 Point2D arrPoint = new Point2D.Double(arrGps.x, arrGps.y);
+					 toAdd.setArr_gps(arrPoint);
+					 toAdd.setDep_time(rs.getLong(12));
+					 toAdd.setType(rs.getString(13));
+					 toAdd.setOcc_seats(rs.getInt(14));
+					 toAdd.setAva_seats(rs.getInt(15));
+					 toAdd.setAnimal(rs.getBoolean(16));
+					 toAdd.setHandicap(rs.getBoolean(17));
+					 toAdd.setSmoke(rs.getBoolean(18));
+					 toAdd.setLuggage(rs.getBoolean(19));
+					 toAdd.setStatus(rs.getString(20));
+					 toAdd.setPrice(rs.getDouble(21));
+					 
+					 String pathString =rs.getString(22);
+					 JsonObject path = gson.toJsonTree(pathString, String.class).getAsJsonObject();
+					 
+					 toAdd.setPath(path);
+					 result.add(toAdd);
+					 rs.next();
+					 }
+				if(rs!=null) rs.close();
+				if(pstm!=null) pstm.close();
+				if(con!=null) con.close();
+				
+				}
+			return result;
+			}
 	
 	
 	
