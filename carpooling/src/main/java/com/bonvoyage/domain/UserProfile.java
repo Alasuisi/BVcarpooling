@@ -1,8 +1,14 @@
 package com.bonvoyage.domain;
 
+import java.io.Serializable;
+
 import elemental.json.JsonObject;
 
-public class UserProfile {
+public class UserProfile implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6919578709495972270L;
 	private int profileID;
 	private int userID;
 	private JsonObject ntransit;

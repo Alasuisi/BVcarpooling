@@ -2,8 +2,19 @@ package com.bonvoyage.domain;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
+import com.google.maps.model.LatLng;
 
 
 
@@ -14,11 +25,11 @@ public class Transfer {
 	private int class_id;
 	private int reser_id;
 	private int pool_id;
-	private JsonObject user_role;
+	private String role; //JsonObject
 	private String dep_addr;
 	private String arr_addr;
-	private Point2D dep_gps;
-	private Point2D arr_gps;
+	private Point2D.Double dep_gps;
+	private Point2D.Double arr_gps;
 	private Long dep_time;
 	private String type;
 	private int occ_seats;
@@ -29,7 +40,8 @@ public class Transfer {
 	private boolean luggage;
 	private String status;
 	private double price;
-	private JsonObject path;
+	private LinkedList<TimedPoint2D> path; //jsonobject
+
 	
 	public Transfer(){}
 
@@ -81,12 +93,16 @@ public class Transfer {
 		this.pool_id = pool_id;
 	}
 
-	public JsonObject getUser_role() {
-		return user_role;
+	public String getUser_role() {
+		return role; 
+		//return "{\"role\":\""+role+"\"}";
 	}
 
-	public void setUser_role(JsonObject user_role) {
-		this.user_role = user_role;
+	public void setUser_role(String user_role) throws JsonProcessingException {
+		/*ObjectMapper mapper = new ObjectMapper();
+		String jsonInString = mapper.writeValueAsString(user_role);
+		this.role = jsonInString;*/
+		this.role=user_role;
 	}
 
 	public String getDep_addr() {
@@ -105,19 +121,19 @@ public class Transfer {
 		this.arr_addr = arr_addr;
 	}
 
-	public Point2D getDep_gps() {
+	public Point2D.Double getDep_gps() {
 		return dep_gps;
 	}
 
-	public void setDep_gps(Point2D dep_gps) {
+	public void setDep_gps(Point2D.Double dep_gps) {
 		this.dep_gps = dep_gps;
 	}
 
-	public Point2D getArr_gps() {
+	public Point2D.Double getArr_gps() {
 		return arr_gps;
 	}
 
-	public void setArr_gps(Point2D point2d) {
+	public void setArr_gps(Point2D.Double point2d) {
 		this.arr_gps = point2d;
 	}
 
@@ -201,12 +217,16 @@ public class Transfer {
 		this.price = price;
 	}
 
-	public JsonObject getPath() {
+	public LinkedList<TimedPoint2D> getPath() {
+		/*ObjectMapper mapper = new ObjectMapper();
+		LinkedList<Point2D> pathFromJson =mapper.readValue(path, new TypeReference<LinkedList<Point2D>>() {});*/
 		return path;
 	}
 
-	public void setPath(JsonObject path) {
-		this.path = path;
+	public void setPath(LinkedList<TimedPoint2D> pathpp) {
+		/*ObjectMapper mapper = new ObjectMapper();
+		String pathInString = mapper.writeValueAsString(path);*/
+		this.path = pathpp;
 	}
 
 	@Override
@@ -234,7 +254,7 @@ public class Transfer {
 	@Override
 	public String toString() {
 		return "Transfer [tran_id=" + tran_id + ", user_id=" + user_id + ", prof_id=" + prof_id + ", class_id="
-				+ class_id + ", reser_id=" + reser_id + ", pool_id=" + pool_id + ", user_role=" + user_role
+				+ class_id + ", reser_id=" + reser_id + ", pool_id=" + pool_id + ", user_role=" + role
 				+ ", dep_addr=" + dep_addr + ", arr_addr=" + arr_addr + ", dep_gps=" + dep_gps + ", arr_gps=" + arr_gps
 				+ ", dep_time=" + dep_time + ", type=" + type + ", occ_seats=" + occ_seats + ", ava_seats=" + ava_seats
 				+ ", animal=" + animal + ", handicap=" + handicap + ", smoke=" + smoke + ", luggage=" + luggage

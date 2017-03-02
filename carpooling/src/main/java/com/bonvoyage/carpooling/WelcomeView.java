@@ -2,6 +2,7 @@ package com.bonvoyage.carpooling;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,6 +28,9 @@ import com.bonvoyage.searchwizard.searchThirdStep;
 import com.bonvoyage.utils.BvStringUtils;
 import com.bonvoyage.utils.DaoException;
 import com.bonvoyage.utils.DbConnector;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.vaadin.data.Item;
@@ -62,7 +66,7 @@ private VerticalLayout testLay2 = new VerticalLayout();
 private Label testLab2 = new Label("BLA BLA BLA");
 
 
-public WelcomeView(CarpoolingUI ui)
+public WelcomeView(CarpoolingUI ui) throws JsonParseException, JsonMappingException, IOException
 	{
 	this.ui=ui;
 	super.rightSplitVertical.setSizeFull();
@@ -130,21 +134,16 @@ public WelcomeView(CarpoolingUI ui)
 	
 	loggedUser = (UserProfile) UI.getCurrent().getSession().getAttribute(UserProfile.class);
 	
-	try {
-		UserProfile thisUser =UI.getCurrent().getSession().getAttribute(UserProfile.class);
-		LinkedList<Transfer> test = TransferDAO.readMyOfferings(thisUser);
-		Iterator<Transfer> iter = test.iterator();
-		while(iter.hasNext())
-			{
-			 Transfer tran = iter.next();
-			 String tabTitle ="TRIP FROM: "+tran.getDep_addr()+" TO: "+tran.getArr_addr()+" AVAILABLE SEATS:"+tran.getOcc_seats()+"/"+tran.getAva_seats();
-			 content.addTab(new TransferView(tran), tabTitle);
-			 //System.out.println(toPrint.toString());
-			}
-	} catch (SQLException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
-	}
+	UserProfile thisUser =UI.getCurrent().getSession().getAttribute(UserProfile.class);
+	LinkedList<Transfer> test = TransferDAO.readMyOfferings(thisUser);
+	Iterator<Transfer> iter = test.iterator();
+	while(iter.hasNext())
+		{
+		 Transfer tran = iter.next();
+		 String tabTitle ="TRIP FROM: "+tran.getDep_addr()+" TO: "+tran.getArr_addr()+" AVAILABLE SEATS:"+tran.getOcc_seats()+"/"+tran.getAva_seats();
+		 content.addTab(new TransferView(tran), tabTitle);
+		 //System.out.println(toPrint.toString());
+		}
 	
 	///////////////////////////////////////////////
 	
@@ -202,7 +201,7 @@ public WelcomeView(CarpoolingUI ui)
 				public void buttonClick(ClickEvent event) {
 					try {
 						TransferDAO.insert(UI.getCurrent().getSession().getAttribute(Transfer.class));
-					} catch (SQLException e) {
+					} catch (JsonProcessingException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -264,7 +263,7 @@ public WelcomeView(CarpoolingUI ui)
 				public void buttonClick(ClickEvent event) {
 					try {
 						TransferDAO.insert((Transfer) UI.getCurrent().getSession().getAttribute("search_tran"));
-					} catch (SQLException e) {
+					} catch (JsonProcessingException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}

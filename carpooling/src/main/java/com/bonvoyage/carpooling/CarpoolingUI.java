@@ -10,6 +10,8 @@ import javax.servlet.annotation.WebServlet;
 import com.bonvoyage.domain.UserProfile;
 import com.bonvoyage.persistance.UserDAO;
 import com.bonvoyage.utils.DaoException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.FontAwesome;
@@ -82,10 +84,23 @@ public class CarpoolingUI extends UI {
         
        // final TextField name = new TextField();
         //name.setCaption("Type your name here:");
-        WelcomeView test = new WelcomeView(this);
-        test.setUserName("This guy");
-        test.addStyleName("set_background");
-        test.setUserName(new Integer(loggedUser.getUserID()).toString());
+        WelcomeView test=null;
+		try {
+			test = new WelcomeView(this);
+			test.setUserName("This guy");
+	        test.addStyleName("set_background");
+	        test.setUserName(new Integer(loggedUser.getUserID()).toString());
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         layout.addComponent(test);
         layout.setMargin(true);
         layout.setSpacing(true);
@@ -107,6 +122,7 @@ public class CarpoolingUI extends UI {
 				
 				try {
 					loggedUser = UserDAO.load(Integer.parseInt(key));
+					System.out.println("sto cazzo de user"+loggedUser.toString());
 					//test.setUserName(new Integer(loggedUser.getUserID()).toString());
 					UI.getCurrent().getSession().setAttribute(UserProfile.class, loggedUser);
 				} catch (SQLException e) {

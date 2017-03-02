@@ -9,6 +9,7 @@ import com.bonvoyage.domain.Transfer;
 import com.bonvoyage.domain.UserProfile;
 import com.bonvoyage.utils.BvStringUtils;
 import com.bonvoyage.utils.GeocodingUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.JsonObject;
 import com.google.maps.model.LatLng;
 import com.vaadin.data.validator.DateRangeValidator;
@@ -85,9 +86,13 @@ public class searchFirstStepView extends VerticalLayout{
 		
 		///Data Properties///
 		
-		JsonObject user_role = new JsonObject();
-		user_role.addProperty("role", "passenger");
-		searchTran.setUser_role(user_role);
+		
+		try {
+			searchTran.setUser_role("passenger");
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		searchTran.setUser_id(loggedUser.getUserID());
 		searchTran.setProf_id(loggedUser.getProfileID());
 		UI.getCurrent().getSession().setAttribute("search_tran", searchTran);
@@ -106,7 +111,7 @@ public class searchFirstStepView extends VerticalLayout{
 		 	{
 			 List<LatLng> path = GeocodingUtils.toCoordinates(departureField.getValue(), arrivalField.getValue());
 			 
-			 searchTran.setPath(GeocodingUtils.toJson(path));
+			 searchTran.setPath(GeocodingUtils.toTimedPath(path));
 			 LatLng source =path.get(0);
 			 LatLng destination = path.get(path.size()-1);
 			 searchTran.setDep_gps(new Point2D.Double(source.lat,source.lng));

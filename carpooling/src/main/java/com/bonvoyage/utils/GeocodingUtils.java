@@ -1,7 +1,11 @@
 package com.bonvoyage.utils;
 
+import java.awt.geom.Point2D;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
+import com.bonvoyage.domain.TimedPoint2D;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -34,12 +38,27 @@ public class GeocodingUtils {
 		return path;
 		}
 	
-	public static JsonObject toJson(List<LatLng> list)
+	/*public static JsonObject toJson(List<LatLng> list)
 	{
 		Gson gson = new GsonBuilder().create();
 		JsonArray myCustomArray = gson.toJsonTree(list).getAsJsonArray();
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("path", myCustomArray);
         return jsonObject;
-	}
+	}*/
+	
+	public static LinkedList<TimedPoint2D> toTimedPath(List<LatLng> list)
+		{
+		LinkedList<TimedPoint2D> timedPath = new LinkedList<TimedPoint2D>();
+		Iterator<LatLng> iterlatlng = list.iterator();
+		while(iterlatlng.hasNext())
+			{
+			 LatLng temp =iterlatlng.next();
+			 TimedPoint2D toAdd = new TimedPoint2D(temp.lat,temp.lng,System.currentTimeMillis());
+			 //toAdd.setLocation(temp.lat, temp.lng);
+			 timedPath.add(toAdd);
+			 
+			}
+		return timedPath;
+		}
 }

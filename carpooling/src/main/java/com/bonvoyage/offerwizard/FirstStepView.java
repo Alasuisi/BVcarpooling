@@ -5,6 +5,7 @@ import com.bonvoyage.designs.OfferFirstStep;
 import com.bonvoyage.domain.Transfer;
 import com.bonvoyage.domain.UserProfile;
 import com.bonvoyage.utils.BvStringUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.JsonObject;
 import com.vaadin.ui.UI;
 
@@ -15,13 +16,13 @@ public class FirstStepView extends OfferFirstStep{
 	private static final long serialVersionUID = -5091980142862302684L;
 	private CarpoolingUI ui;
 	
-public FirstStepView(CarpoolingUI ui){
+public FirstStepView(CarpoolingUI ui) throws JsonProcessingException{
 	this.ui=ui;
 	UserProfile loggedUser = UI.getCurrent().getSession().getAttribute(UserProfile.class);
 	Transfer tran = new Transfer();
-	JsonObject user_role = new JsonObject();
-	user_role.addProperty("role", "driver");
-	tran.setUser_role(user_role);
+	//JsonObject user_role = new JsonObject();
+	//user_role.addProperty("role", "driver");
+	tran.setUser_role("driver");
 	tran.setUser_id(loggedUser.getUserID());
 	tran.setProf_id(loggedUser.getProfileID());
 	UI.getCurrent().getSession().setAttribute(Transfer.class, tran);

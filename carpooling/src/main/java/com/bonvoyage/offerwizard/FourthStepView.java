@@ -6,8 +6,10 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
+import com.bonvoyage.domain.TimedPoint2D;
 import com.bonvoyage.domain.Transfer;
 import com.bonvoyage.utils.BvStringUtils;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -173,10 +175,20 @@ public class FourthStepView extends VerticalLayout{
 				EncodedPolyline lines=routes[0].overviewPolyline;
 				List<LatLng> list = lines.decodePath();
 				/////////////////TEST GEOJSON/////////////////
+				LinkedList<TimedPoint2D> timedPath = new LinkedList<TimedPoint2D>();
+				Iterator<LatLng> iterlatlng = list.iterator();
+				while(iterlatlng.hasNext())
+					{
+					 LatLng temp =iterlatlng.next();
+					 TimedPoint2D toAdd = new TimedPoint2D(temp.lat,temp.lng,System.currentTimeMillis());
+					 //toAdd.setLocation(temp.lat, temp.lng);
+					 timedPath.add(toAdd);
+					 
+					}
+				tran.setPath(timedPath);
 				
-				
-				System.out.println("testJson"+testJson(list));
-				tran.setPath(testJson(list));
+				//System.out.println("testJson"+testJson(list));
+				//tran.setPath(testJson(list));
 				
 				
 				LatLng source =list.get(0);
@@ -295,62 +307,11 @@ public class FourthStepView extends VerticalLayout{
 		
 		}
 	
-	public JsonObject testJson(List<LatLng> list)
-		{
-			Gson gson = new GsonBuilder().create();
-			JsonArray myCustomArray = gson.toJsonTree(list).getAsJsonArray();
-	        JsonObject jsonObject = new JsonObject();
-	        jsonObject.add("path", myCustomArray);
-	        return jsonObject;
-		}
 	public boolean isFormCompleted()
 		{
 		 return transferComplete;
 		}
 	
-	public String toJson(List<LatLng> list){
-		  JsonObject featureCollection = new JsonObject();
-		  featureCollection.addProperty("type", "FeatureCollection");
-		  JsonObject properties = new JsonObject();
-		  properties.addProperty("name", "ESPG:4326");
-		  JsonObject crs = new JsonObject();
-		  crs.addProperty("type", "name");
-		  crs.add("properties", properties);
-		  featureCollection.add("crs", crs);
-
-		  JsonArray features = new JsonArray();
-		  JsonObject feature = new JsonObject();
-		  feature.addProperty("type", "Feature");
-		  //JSONObject geometry = new JSONObject();
-
-		  //JSONAray JSONArrayCoord = new JSONArray();
-		  Iterator<LatLng> iter = list.iterator();
-		  while(iter.hasNext())
-		  	{
-			  LatLng eachElement = iter.next();
-			    //if(eachElement.getLongtitude()!=null){
-			      JsonObject geometry = new JsonObject();
-			      JsonArray JSONArrayCoord = new JsonArray();
-			      JsonObject newFeature = new JsonObject();
-			     // JsonObject jsonCoord = new JsonObject();
-			     // jsonCoord.addProperty("0", eachElement.lng);
-			     // jsonCoord.addProperty("1", eachElement.lat);
-			      String lng =new Double(eachElement.lng).toString();
-			      String lat = new Double(eachElement.lat).toString();
-			      JsonPrimitive lngPrim = new JsonPrimitive("portanna");
-
-			      JSONArrayCoord.add(new JsonPrimitive(lng));
-			      JSONArrayCoord.add(new JsonPrimitive(lat));
-			      
-			      geometry.addProperty("type", "Point");
-			      geometry.add("coordinates", JSONArrayCoord);
-			      feature.add("geometry", geometry);
-			      features.add(newFeature);
-			      featureCollection.add("features", features);
-			    //}
-		  	}
-
-		  return featureCollection.toString();
-		}
+	
 
 }

@@ -1,6 +1,7 @@
 package com.bonvoyage.persistance;
 
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,16 +10,26 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 
+import javax.ws.rs.core.MediaType;
+
 import org.postgresql.util.PGobject;
 import org.postgresql.geometric.PGpoint;
 
 import com.bonvoyage.domain.Transfer;
 import com.bonvoyage.domain.UserProfile;
 import com.bonvoyage.utils.DbConnector;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 
 
 
@@ -31,7 +42,7 @@ public class TransferDAO implements Serializable{
 				+ "\"Arrival_GPS\",\"Departure_Time\",\"Type\",\"Occupied_Seats\",\"Available_Seats\",\"Animal\",\"Handicap\",\"Smoke\",\"Luggage\",\"Status\",\"Price\",\"Path\")"
 				+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		
-		public static void insert(Transfer transfer) throws SQLException
+		/*public static void insert(Transfer transfer) throws SQLException
 		{
 			Connection con = null;
 			PreparedStatement pstm = null;
@@ -80,9 +91,45 @@ public class TransferDAO implements Serializable{
 			pstm.executeUpdate();
 			con.commit();
 			con.close();
-		}
+		}*/
 		
-		private static String READ_MY_OFFERINGS="Select * from Transfer WHERE \"User_ID\"=?";
+		public static void insert(Transfer tran) throws JsonProcessingException
+			{
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonTran = mapper.writeValueAsString(tran);
+			
+			Client client = Client.create();
+			WebResource resource = client.resource("http://82.223.67.189:8080/bvcrplbe/offertran");
+			ClientResponse response = resource.type(MediaType.APPLICATION_JSON).put(ClientResponse.class,jsonTran);
+			if (response.getStatus() != 201) {
+				throw new RuntimeException("Failed : HTTP error code : "
+				     + response.getStatus()+" "+response.getEntity(String.class));
+			}
+			System.out.println("Output from Server .... \n");
+			String output = response.getEntity(String.class);
+			System.out.println(output);
+			}
+		
+		public static LinkedList<Transfer> readMyOfferings(UserProfile user) throws JsonParseException, JsonMappingException, IOException
+			{
+				System.out.println("\n============ testing getTransfers============");
+				Client client = Client.create();
+				String userid=new Integer(user.getUserID()).toString();
+				WebResource resource = client.resource("http://localhost:8080/bvcrplbe/offertran/"+userid);
+				ClientResponse response = resource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+				if (response.getStatus() != 200) {
+					throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+				}
+	
+				String output = response.getEntity(String.class);
+				ObjectMapper mapper = new ObjectMapper();
+				LinkedList<Transfer> result = mapper.readValue(output, new TypeReference<LinkedList<Transfer>>(){});
+				System.out.println("\n============getTransfers (user:"+userid+")============");
+				System.out.println(result);
+				return result;
+			}
+		
+		/*private static String READ_MY_OFFERINGS="Select * from Transfer WHERE \"User_ID\"=?";
 		public static LinkedList<Transfer> readMyOfferings(UserProfile user) throws SQLException
 			{
 			Connection con = null;
@@ -92,7 +139,9 @@ public class TransferDAO implements Serializable{
 			DbConnector manager = new DbConnector();
 			con = manager.connect();
 			pstm=con.prepareStatement(READ_MY_OFFERINGS);
+			System.out.println("DIOCANEEEE "+user.getUserID());
 			pstm.setInt(1, user.getUserID());
+			//pstm.setInt(1, 89);
 			rs=pstm.executeQuery();
 			if(rs.isBeforeFirst())
 				{
@@ -147,9 +196,17 @@ public class TransferDAO implements Serializable{
 				if(pstm!=null) pstm.close();
 				if(con!=null) con.close();
 				
-				}
+				}else
+					{
+					//there are no results, so an empty list is returned
+					result= new LinkedList<Transfer>();
+					if(rs!=null) rs.close();
+					if(pstm!=null) pstm.close();
+					if(con!=null) con.close();
+					return result;
+					}
 			return result;
-			}
+			}*/
 	
 	
 	
