@@ -30,10 +30,14 @@ import com.bonvoyage.utils.DbConnector;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.vaadin.data.Item;
+import com.vaadin.event.ContextClickEvent;
+import com.vaadin.event.ContextClickEvent.ContextClickListener;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
+import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -107,14 +111,35 @@ public WelcomeView(CarpoolingUI ui)
 	content.addStyleName("animated");
 	content.addStyleName("fadeInUpBig");
 	content.addStyleName("delay15");
+	content.addSelectedTabChangeListener(new SelectedTabChangeListener(){
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5004943874436714662L;
+
+		@Override
+		public void selectedTabChange(SelectedTabChangeEvent event) {
+			content.removeStyleName("delay15");
+			content.removeStyleName("fadeInUpBig");
+			content.removeStyleName("animated");
+			
+		}});
+	
+	
+	
+	loggedUser = (UserProfile) UI.getCurrent().getSession().getAttribute(UserProfile.class);
+	
 	try {
 		UserProfile thisUser =UI.getCurrent().getSession().getAttribute(UserProfile.class);
 		LinkedList<Transfer> test = TransferDAO.readMyOfferings(thisUser);
 		Iterator<Transfer> iter = test.iterator();
 		while(iter.hasNext())
 			{
-			 Transfer toPrint = iter.next();
-			 System.out.println(toPrint.toString());
+			 Transfer tran = iter.next();
+			 String tabTitle ="TRIP FROM: "+tran.getDep_addr()+" TO: "+tran.getArr_addr()+" AVAILABLE SEATS:"+tran.getOcc_seats()+"/"+tran.getAva_seats();
+			 content.addTab(new TransferView(tran), tabTitle);
+			 //System.out.println(toPrint.toString());
 			}
 	} catch (SQLException e1) {
 		// TODO Auto-generated catch block

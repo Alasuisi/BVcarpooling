@@ -18,6 +18,7 @@ import com.bonvoyage.utils.DbConnector;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 
 
@@ -108,8 +109,10 @@ public class TransferDAO implements Serializable{
 					 toAdd.setPool_id(rs.getInt(6));
 					 
 					 String roleString = rs.getString(7);
-					 Gson gson = new GsonBuilder().create();
-					 JsonObject roleJson = gson.toJsonTree(roleString, String.class).getAsJsonObject();
+					 //Gson gson = new GsonBuilder().create();
+					 //JsonObject roleJson = gson.toJsonTree(roleString, String.class).getAsJsonArray().getAsJsonObject();
+					 JsonObject roleJson = (new JsonParser()).parse(roleString).getAsJsonObject();
+				
 					 
 					 toAdd.setUser_role(roleJson);
 					 toAdd.setDep_addr(rs.getString(8));
@@ -120,7 +123,8 @@ public class TransferDAO implements Serializable{
 					 PGpoint arrGps = new PGpoint(rs.getString(11));
 					 Point2D arrPoint = new Point2D.Double(arrGps.x, arrGps.y);
 					 toAdd.setArr_gps(arrPoint);
-					 toAdd.setDep_time(rs.getLong(12));
+					 Timestamp depTimestamp = rs.getTimestamp(12);
+					 toAdd.setDep_time(depTimestamp.getTime());
 					 toAdd.setType(rs.getString(13));
 					 toAdd.setOcc_seats(rs.getInt(14));
 					 toAdd.setAva_seats(rs.getInt(15));
@@ -132,7 +136,8 @@ public class TransferDAO implements Serializable{
 					 toAdd.setPrice(rs.getDouble(21));
 					 
 					 String pathString =rs.getString(22);
-					 JsonObject path = gson.toJsonTree(pathString, String.class).getAsJsonObject();
+					 //JsonObject path = gson.toJsonTree(pathString, String.class).getAsJsonObject();
+					 JsonObject path = (new JsonParser()).parse(pathString).getAsJsonObject();
 					 
 					 toAdd.setPath(path);
 					 result.add(toAdd);

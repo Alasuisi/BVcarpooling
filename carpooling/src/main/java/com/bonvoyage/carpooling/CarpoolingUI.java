@@ -42,11 +42,13 @@ public class CarpoolingUI extends UI {
 	 * 
 	 */
 	private static final long serialVersionUID = -1602235954991514026L;
+	private UserProfile loggedUser=null;
 
 
 
 	@Override
     protected void init(VaadinRequest vaadinRequest) {
+		
     	
     	VaadinSession.getCurrent().addRequestHandler(new RequestHandler(){
 
@@ -74,7 +76,8 @@ public class CarpoolingUI extends UI {
 		        } else
 		            return false; // No response was written
 			}});
-
+    	
+    	setUser(vaadinRequest.getParameter("key"));
         final VerticalLayout layout = new VerticalLayout();
         
        // final TextField name = new TextField();
@@ -82,22 +85,29 @@ public class CarpoolingUI extends UI {
         WelcomeView test = new WelcomeView(this);
         test.setUserName("This guy");
         test.addStyleName("set_background");
+        test.setUserName(new Integer(loggedUser.getUserID()).toString());
         layout.addComponent(test);
         layout.setMargin(true);
         layout.setSpacing(true);
         layout.addStyleName("set_background");
         System.out.println(vaadinRequest.getParameter("key"));
-        String user = vaadinRequest.getParameter("key");
+        setContent(layout);
+        
+    }
+	
+	private void setUser(String key)
+		{
+		//String user = vaadinRequest.getParameter("key");
         //System.getProperties().list(System.out);
-        if(user!=null) 
+        if(key!=null) 
         	{
         		//test.setUserName(user);
         		//UI.getCurrent().getSession().setAttribute("userid", vaadinRequest.getParameter("key"));
         		//Integer key=Integer.parseInt((String)UI.getCurrent().getSession().getAttribute("userid"));
-				UserProfile loggedUser;
+				
 				try {
-					loggedUser = UserDAO.load(Integer.parseInt(user));
-					test.setUserName(new Integer(loggedUser.getUserID()).toString());
+					loggedUser = UserDAO.load(Integer.parseInt(key));
+					//test.setUserName(new Integer(loggedUser.getUserID()).toString());
 					UI.getCurrent().getSession().setAttribute(UserProfile.class, loggedUser);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -108,9 +118,7 @@ public class CarpoolingUI extends UI {
 				}
 				
         	}
-        setContent(layout);
-        
-    }
+		}
     
     
 
