@@ -12,6 +12,7 @@ import java.util.List;
 import com.bonvoyage.domain.TimedPoint2D;
 import com.bonvoyage.domain.Transfer;
 import com.bonvoyage.utils.BvStringUtils;
+import com.bonvoyage.utils.GeocodingUtils;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -193,6 +194,11 @@ public class FourthStepView extends VerticalLayout{
 				
 				LatLng source =list.get(0);
 				LatLng destination = list.get(list.size()-1);
+				
+		//////////////////////test travel time///////////////////////////
+		GeocodingUtils.getDistanceAndDurationForDirection(source, destination, context);
+		/////////////////////////////////////////////////////////////////
+				
 				tran.setDep_gps(new Point2D.Double(source.lat,source.lng));
 				tran.setArr_gps(new Point2D.Double(destination.lat, destination.lng));
 				tran.setDep_time(System.currentTimeMillis()+3600000);

@@ -11,9 +11,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.maps.DirectionsApi;
+import com.google.maps.DistanceMatrixApi;
+import com.google.maps.DistanceMatrixApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.EncodedPolyline;
 import com.google.maps.model.LatLng;
 
@@ -35,6 +38,7 @@ public class GeocodingUtils {
 		DirectionsRoute[] routes = results.routes;
 		EncodedPolyline lines=routes[0].overviewPolyline;
 		List<LatLng> path = lines.decodePath();
+		DistanceMatrixApiRequest test = new DistanceMatrixApiRequest(context);
 		return path;
 		}
 	
@@ -61,4 +65,34 @@ public class GeocodingUtils {
 			}
 		return timedPath;
 		}
+	
+	public static void getDistanceAndDurationForDirection(LatLng origin,LatLng destination,GeoApiContext geoApiContext){
+		 // LatLng origin=new LatLng(startLocation.getLat(),startLocation.getLng());
+		 // LatLng destination=new LatLng(destinationLocation.getLat(),destinationLocation.getLng());
+		  try {
+		    DistanceMatrix distanceMatrix=DistanceMatrixApi.newRequest(geoApiContext).origins(origin).destinations(destination).await();
+		    if (distanceMatrix.rows.length == 0 || distanceMatrix.rows[0].elements.length == 0)     throw new RuntimeException("No distance and duration found.");
+		    //return new RouteDistanceDuration(distanceMatrix.rows[0].elements[0].distance.inMeters,distanceMatrix.rows[0].elements[0].duration.inSeconds);
+		    System.out.println("Portanna 1 "+distanceMatrix.rows[0].elements[0].distance.inMeters);
+		    System.out.println("Portanna 2 "+distanceMatrix.rows[0].elements[0].duration.inSeconds);
+		  }
+		 catch (  Exception e) {
+		    e.printStackTrace();
+		    throw new RuntimeException(e);
+		  }
+		}
+	
+	/*public RouteDistanceDurvoidation getDistanceAndDurationForDirection(RouteLocation startLocation,RouteLocation destinationLocation){
+		  LatLng origin=new LatLng(startLocation.getLat(),startLocation.getLng());
+		  LatLng destination=new LatLng(destinationLocation.getLat(),destinationLocation.getLng());
+		  try {
+		    DistanceMatrix distanceMatrix=DistanceMatrixApi.newRequest(geoApiContext).origins(origin).destinations(destination).await();
+		    if (distanceMatrix.rows.length == 0 || distanceMatrix.rows[0].elements.length == 0)     throw new RuntimeException("No distance and duration found.");
+		    return new RouteDistanceDuration(distanceMatrix.rows[0].elements[0].distance.inMeters,distanceMatrix.rows[0].elements[0].duration.inSeconds);
+		  }
+		 catch (  Exception e) {
+		    e.printStackTrace();
+		    throw new RuntimeException(e);
+		  }
+		}*/
 }
