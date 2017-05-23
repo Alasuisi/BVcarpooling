@@ -125,10 +125,19 @@ public class CarpoolingUI extends UI {
 					System.out.println("sto cazzo de user"+loggedUser.toString());
 					//test.setUserName(new Integer(loggedUser.getUserID()).toString());
 					UI.getCurrent().getSession().setAttribute(UserProfile.class, loggedUser);
-				} catch (SQLException e) {
+				} catch (DaoException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (DaoException e) {
+				} catch (JsonParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

@@ -99,7 +99,7 @@ public class TransferDAO implements Serializable{
 			String jsonTran = mapper.writeValueAsString(tran);
 			
 			Client client = Client.create();
-			WebResource resource = client.resource("http://82.223.67.189:8080/bvcrplbe/offertran");
+			WebResource resource = client.resource("http://82.223.67.189:8080/bvcrplbe/OfferRide");
 			ClientResponse response = resource.type(MediaType.APPLICATION_JSON).put(ClientResponse.class,jsonTran);
 			if (response.getStatus() != 201) {
 				throw new RuntimeException("Failed : HTTP error code : "
@@ -115,7 +115,7 @@ public class TransferDAO implements Serializable{
 				System.out.println("\n============ testing getTransfers============");
 				Client client = Client.create();
 				String userid=new Integer(user.getUserID()).toString();
-				WebResource resource = client.resource("http://localhost:8080/bvcrplbe/offertran/"+userid);
+				WebResource resource = client.resource("http://localhost:8080/bvcrplbe/OfferRide/"+userid);
 				ClientResponse response = resource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 				if (response.getStatus() != 200) {
 					throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());

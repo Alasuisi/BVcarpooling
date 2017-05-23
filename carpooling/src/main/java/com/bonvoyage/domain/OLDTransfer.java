@@ -18,7 +18,7 @@ import com.google.maps.model.LatLng;
 
 
 
-public class Transfer {
+public class OLDTransfer {
 	private int tran_id;
 	private int user_id;
 	private int prof_id;
@@ -41,36 +41,9 @@ public class Transfer {
 	private String status;
 	private double price;
 	private LinkedList<TimedPoint2D> path; //jsonobject
-	private double det_range;
-	private String ride_details;
-	private String callback_uri;
 
 	
-	public String getCallback_uri() {
-		return callback_uri;
-	}
-
-	public void setCallback_uri(String callback_uri) {
-		this.callback_uri = callback_uri;
-	}
-
-	public Transfer(){}
-
-	public double getDet_range() {
-		return det_range;
-	}
-
-	public void setDet_range(double det_range) {
-		this.det_range = det_range;
-	}
-
-	public String getRide_details() {
-		return ride_details;
-	}
-
-	public void setRide_details(String ride_details) {
-		this.ride_details = ride_details;
-	}
+	public OLDTransfer(){}
 
 	public int getTran_id() {
 		return tran_id;
@@ -272,7 +245,7 @@ public class Transfer {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Transfer other = (Transfer) obj;
+		OLDTransfer other = (OLDTransfer) obj;
 		if (tran_id != other.tran_id)
 			return false;
 		return true;
@@ -281,15 +254,12 @@ public class Transfer {
 	@Override
 	public String toString() {
 		return "Transfer [tran_id=" + tran_id + ", user_id=" + user_id + ", prof_id=" + prof_id + ", class_id="
-				+ class_id + ", reser_id=" + reser_id + ", pool_id=" + pool_id + ", role=" + role + ", dep_addr="
-				+ dep_addr + ", arr_addr=" + arr_addr + ", dep_gps=" + dep_gps + ", arr_gps=" + arr_gps + ", dep_time="
-				+ dep_time + ", type=" + type + ", occ_seats=" + occ_seats + ", ava_seats=" + ava_seats + ", animal="
-				+ animal + ", handicap=" + handicap + ", smoke=" + smoke + ", luggage=" + luggage + ", status=" + status
-				+ ", price=" + price + ", path=" + path + ", det_range=" + det_range + ", ride_details=" + ride_details
-				+ ", callback_uri=" + callback_uri + "]";
-	}
-
-	
+				+ class_id + ", reser_id=" + reser_id + ", pool_id=" + pool_id + ", user_role=" + role
+				+ ", dep_addr=" + dep_addr + ", arr_addr=" + arr_addr + ", dep_gps=" + dep_gps + ", arr_gps=" + arr_gps
+				+ ", dep_time=" + dep_time + ", type=" + type + ", occ_seats=" + occ_seats + ", ava_seats=" + ava_seats
+				+ ", animal=" + animal + ", handicap=" + handicap + ", smoke=" + smoke + ", luggage=" + luggage
+				+ ", status=" + status + ", price=" + price + ", path=" + path + "]";
+	};
 	
 	
 	

@@ -1,14 +1,24 @@
 package com.bonvoyage.persistance;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.ws.rs.core.MediaType;
+
 import com.bonvoyage.domain.UserProfile;
 import com.bonvoyage.utils.DaoException;
 import com.bonvoyage.utils.DbConnector;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 
 import elemental.json.Json;
 import elemental.json.JsonObject;
@@ -18,10 +28,27 @@ import elemental.json.JsonObject;
 public class UserDAO implements Serializable{
 
 	
+	public static UserProfile load(int userid) throws DaoException, JsonParseException, JsonMappingException, IOException
+		{
+		Client client = Client.create();
+		String address = "http://localhost:8080/bvcrplbe/userprofile/"+userid;
+		WebResource resource = client.resource(address);
+		ClientResponse response = resource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+		if(response.getStatus()!=200)
+			{
+			 throw new DaoException("UserDAO error:"+System.lineSeparator()+response.getStatusInfo());
+			}
+		ObjectMapper mapper = new ObjectMapper();
+		String profString = response.getEntity(String.class);
+		UserProfile prof = mapper.readValue(profString, new TypeReference<UserProfile>(){});
+		return prof;
+		}
+	
+	
 	/*Sql statement for obtaining an instance of User, reading from table user_profile
 	 * 
 	 */
-	private static final String GET_USER_BY_ID = "SELECT * FROM user_profile Where user_id=?";
+	/*private static final String GET_USER_BY_ID = "SELECT * FROM user_profile Where user_id=?";
 	public static UserProfile load(int userid) throws SQLException, DaoException
 		{
 		 Connection con=null;
@@ -84,7 +111,7 @@ public class UserDAO implements Serializable{
 				con.close();
 			 throw new DaoException("There is no user with associated ID="+userid+". Empty Result set");
 		 	}
-		}
+		}*/
 	
 	
 	

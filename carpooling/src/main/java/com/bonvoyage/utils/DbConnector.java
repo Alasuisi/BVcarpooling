@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.postgresql.util.PSQLException;
+
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -69,13 +71,16 @@ public class DbConnector {
 	  {
 	    try
 	    {
-	    	if(UI.getCurrent().getSession().getAttribute("tunnel")==null)
+	    	System.out.println("ma che cazz? "+UI.getCurrent().getSession().getAttribute("tunnel"));
+	    	String tunnelUP=(String) UI.getCurrent().getSession().getAttribute("tunnel");
+	    	if(tunnelUP==null) tunnelUP="false";
+	    	if(!tunnelUP.equals("true"))
 	    	{
 	    		System.out.println("dentro primo if");
-	    		String strSshUser = "osboxes";                  // SSH loging username
-	    		String strSshPassword = "osboxes.org";                   // SSH login password
+	    		String strSshUser = "bonvoyage";                  // SSH loging username
+	    		String strSshPassword = "bnvyg2017";                   // SSH login password
 	    		String strSshHost = "82.223.67.189";          // hostname or ip or SSH server
-	    		int nSshPort = 22;                                    // remote SSH host port number
+	    		int nSshPort = 2222;                                    // remote SSH host port number
 	    		String strRemoteHost = "localhost";  // hostname or ip of your database server
 	                                      // local port number use to bind SSH tunnel
 	    		int nRemotePort = 5432;                               // remote port number of your database 
@@ -98,9 +103,11 @@ public class DbConnector {
 			      con.setReadOnly(false);
 				  con.setAutoCommit(false);
 			      return con;
-		      }catch(Exception e)
+		      }catch(PSQLException e)
 		      	{
 		    	  e.printStackTrace();
+		    	  UI.getCurrent().getSession().setAttribute("tunnel", false);
+		    	  connect();
 		      	}
 	      //con.close();
 	    }
