@@ -122,6 +122,7 @@ public class TransferDAO implements Serializable{
 				}
 	
 				String output = response.getEntity(String.class);
+				System.out.println("Received transfer--->>> "+output);
 				ObjectMapper mapper = new ObjectMapper();
 				LinkedList<Transfer> result = mapper.readValue(output, new TypeReference<LinkedList<Transfer>>(){});
 				System.out.println("\n============getTransfers (user:"+userid+")============");

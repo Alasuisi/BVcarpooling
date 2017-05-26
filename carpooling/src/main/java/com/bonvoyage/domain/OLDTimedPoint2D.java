@@ -3,16 +3,17 @@ package com.bonvoyage.domain;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
-public class TimedPoint2D{
+
+public class OLDTimedPoint2D{
 
 	
 	private double latitude;
 	private double longitude;
 	private long touchTime;
 	
-	public TimedPoint2D(){};
+	public OLDTimedPoint2D(){};
 	
-	public TimedPoint2D(double latitude, double longitude, long touchTime) {
+	public OLDTimedPoint2D(double latitude, double longitude, long touchTime) {
 		super();
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -23,7 +24,7 @@ public class TimedPoint2D{
 		return latitude;
 	}
 
-	public void setLatitude(double latitude) {
+	public void setLatitude(long latitude) {
 		this.latitude = latitude;
 	}
 
@@ -31,7 +32,7 @@ public class TimedPoint2D{
 		return longitude;
 	}
 
-	public void setLongitude(double longitude) {
+	public void setLongitude(long longitude) {
 		this.longitude = longitude;
 	}
 
@@ -42,6 +43,8 @@ public class TimedPoint2D{
 	public void setTouchTime(long touchTime) {
 		this.touchTime = touchTime;
 	}
+
+	
 
 	
 
@@ -66,7 +69,7 @@ public class TimedPoint2D{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TimedPoint2D other = (TimedPoint2D) obj;
+		OLDTimedPoint2D other = (OLDTimedPoint2D) obj;
 		if (java.lang.Double.doubleToLongBits(latitude) != java.lang.Double.doubleToLongBits(other.latitude))
 			return false;
 		if (java.lang.Double.doubleToLongBits(longitude) != java.lang.Double.doubleToLongBits(other.longitude))
