@@ -18,6 +18,7 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Slider;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -37,6 +38,7 @@ public class searchFirstStepView extends VerticalLayout{
 	private TextField departureField = new TextField();
 	private TextField arrivalField = new TextField();
 	private DateField departureTime = new DateField();
+	private Slider meterSlide = new Slider();
 	private UserProfile loggedUser = (UserProfile) UI.getCurrent().getSession().getAttribute(UserProfile.class);
 	private Transfer searchTran = new Transfer();
 	
@@ -47,12 +49,13 @@ public class searchFirstStepView extends VerticalLayout{
 		this.setSizeFull();
 		this.setSpacing(true);
 		this.setMargin(true);
-		this.addComponents(titleLabel,subtitleLabel,departureField,arrivalField,departureTime);
+		this.addComponents(titleLabel,subtitleLabel,departureField,arrivalField,departureTime,meterSlide);
 		this.setComponentAlignment(titleLabel, Alignment.TOP_CENTER);
 		this.setComponentAlignment(subtitleLabel, Alignment.TOP_CENTER);
 		this.setComponentAlignment(departureField, Alignment.TOP_CENTER);
 		this.setComponentAlignment(arrivalField, Alignment.TOP_CENTER);
 		this.setComponentAlignment(departureTime, Alignment.TOP_CENTER);
+		this.setComponentAlignment(meterSlide, Alignment.TOP_CENTER);
 		//this.addStyleName("search_background");
 		//titleLabel.setWidth("100%");
 		//subtitleLabel.setWidth("100%");
@@ -79,6 +82,12 @@ public class searchFirstStepView extends VerticalLayout{
 		DateRangeValidator depTimeVal = new DateRangeValidator("You cannot turn back time!", new Date(System.currentTimeMillis()), null, Resolution.MINUTE);
 		departureTime.addValidator(depTimeVal);
 		departureTime.setValue(new Date(System.currentTimeMillis()));
+		meterSlide.setMin(100);
+		meterSlide.setMax(1500);
+		meterSlide.setImmediate(true);
+		int meterChosen =meterSlide.getValue().intValue();
+		 String sliderStringValue = String.valueOf(meterChosen);
+		meterSlide.setCaption(sliderStringValue);
 		
 		//this.setExpandRatio(departureTime, 100);
 		this.setExpandRatio(departureTime, 100);
@@ -95,6 +104,7 @@ public class searchFirstStepView extends VerticalLayout{
 		}
 		searchTran.setUser_id(loggedUser.getUserID());
 		searchTran.setProf_id(loggedUser.getProfileID());
+		searchTran.setCallback_uri("http://localhost:8080/carpooling/callback/transfer");
 		UI.getCurrent().getSession().setAttribute("search_tran", searchTran);
 		
 		

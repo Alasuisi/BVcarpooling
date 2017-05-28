@@ -99,8 +99,8 @@ public class TransferDAO implements Serializable{
 			String jsonTran = mapper.writeValueAsString(tran);
 			
 			Client client = Client.create();
-			WebResource resource = client.resource("http://82.223.67.189:8080/bvcrplbe/OfferRide");
-			ClientResponse response = resource.type(MediaType.APPLICATION_JSON).put(ClientResponse.class,jsonTran);
+			WebResource resource = client.resource("http://localhost:8080/bvcrplbe/OfferRide");
+			ClientResponse response = resource.type(MediaType.APPLICATION_JSON).post(ClientResponse.class,jsonTran);
 			if (response.getStatus() != 201) {
 				throw new RuntimeException("Failed : HTTP error code : "
 				     + response.getStatus()+" "+response.getEntity(String.class));
@@ -127,6 +127,7 @@ public class TransferDAO implements Serializable{
 				LinkedList<Transfer> result = mapper.readValue(output, new TypeReference<LinkedList<Transfer>>(){});
 				System.out.println("\n============getTransfers (user:"+userid+")============");
 				System.out.println(result);
+				if (result==null) result=new LinkedList<Transfer>();
 				return result;
 			}
 		

@@ -125,7 +125,7 @@ public class Transfer {
 		//return "{\"role\":\""+role+"\"}";
 	}
 
-	public void setUser_role(String user_role) throws JsonProcessingException {
+	public void setUser_role(String user_role) throws JsonProcessingException{
 		/*ObjectMapper mapper = new ObjectMapper();
 		String jsonInString = mapper.writeValueAsString(user_role);
 		this.role = jsonInString;*/

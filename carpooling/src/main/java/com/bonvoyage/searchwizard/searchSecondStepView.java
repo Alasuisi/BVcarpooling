@@ -90,7 +90,7 @@ public class searchSecondStepView extends VerticalLayout {
 				int newSeatsChosen =seatsSlider.getValue().intValue();
 				String newSliderStringValue = String.valueOf(newSeatsChosen);
 				sliderLabel.setValue(newSliderStringValue);
-				//searchTran.setOcc_seats(newSeatsChosen);
+				searchTran.setOcc_seats(newSeatsChosen);
 				System.out.println(newSeatsChosen);
 				
 			}
