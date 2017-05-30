@@ -14,20 +14,27 @@ import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
 
 public class TransferView extends VerticalLayout{
 	private Label mapTitleLabel = new Label("Your path");
 	private Label depLabel = new Label();
 	private Label arrLabel = new Label();
 	private Label timeLabel = new Label();
+	private Button fixMap = new Button();
 	private GoogleMap map = null;
 	
 	private HorizontalSplitPanel contentPanel = new HorizontalSplitPanel();
 	private VerticalLayout leftSide= new VerticalLayout();
 	private VerticalLayout rightSide = new VerticalLayout();
+	private double rndlatMax;
+	private double rndlngMax;
+	private double rndlatMin;
+	private double rndlngMin;
 	
 	public TransferView(Transfer tran)
 		{
@@ -50,7 +57,7 @@ public class TransferView extends VerticalLayout{
 			while(pathIter.hasNext())
 				{
 				 TimedPoint2D current = pathIter.next();
-				 System.out.println("current point "+current);
+				 //System.out.println("current point "+current);
 				 double lat = current.getLatitude();
 				 double lng= current.getLongitude();
 				 points.add(new LatLon(lat,lng));
@@ -63,11 +70,8 @@ public class TransferView extends VerticalLayout{
 			GoogleMapPolyline overlay = new GoogleMapPolyline(points, "#d31717", 0.8, 10);
 			 map.addPolyline(overlay);
 		 
-		double latCenter = (latMax+latMin)/2;
-		double lngCenter = (lngMax+lngMin)/2;
-		LatLon center = new LatLon(latCenter,lngCenter);
-		 map.setCenter(center);
-		 map.fitToBounds(new LatLon(latMax,lngMax), new LatLon(latMin,lngMin));
+		
+		 
 		
 		GoogleMapMarker start = new GoogleMapMarker();
 		start.setPosition(points.get(0));
@@ -97,11 +101,39 @@ public class TransferView extends VerticalLayout{
 		 rightSide.setResponsive(true);
 		 rightSide.setImmediate(true);
 		 leftSide.addComponents(mapTitleLabel,map);
+		 
+		 double latCenter = (latMax+latMin)/2;
+			double lngCenter = (lngMax+lngMin)/2;
+			LatLon center = new LatLon(latCenter,lngCenter);
+			 map.setCenter(center);
+			 System.out.println("boundaries 1: "+latMax+","+lngMax);
+			 System.out.println("boundaries 2: "+latMin+","+lngMin);
+			 rndlatMax = (double)Math.round(latMax * 100000d) / 100000d;
+			 rndlngMax = (double)Math.round(lngMax * 100000d) / 100000d;
+			 rndlatMin = (double)Math.round(latMin * 100000d) / 100000d;
+			 rndlngMin = (double)Math.round(lngMin * 100000d) / 100000d;
+			 //map.fitToBounds(new LatLon(rndlatMax,rndlngMax), new LatLon(rndlatMin,rndlngMin));
+			 map.setZoom(6);
+		 
 		 mapTitleLabel.setHeightUndefined();
 		 leftSide.setComponentAlignment(mapTitleLabel, Alignment.TOP_LEFT);
 		 leftSide.setComponentAlignment(map, Alignment.TOP_LEFT);
 		 leftSide.setExpandRatio(map, 1);
-		 rightSide.addComponents(depLabel,arrLabel,timeLabel);
+		 rightSide.addComponents(depLabel,arrLabel,timeLabel,fixMap);
+		 fixMap.setCaption("fix map position");
+		 fixMap.addClickListener(new Button.ClickListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -9024891871815325038L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				fitMap();
+				
+			}
+		});
 		 depLabel.setValue(tran.getDep_addr());
 		 arrLabel.setValue(tran.getArr_addr());
 		 Date departure = new Date(tran.getDep_time());
@@ -114,6 +146,10 @@ public class TransferView extends VerticalLayout{
 		 this.addComponent(contentPanel);
 		 
 		 
+		}
+	public void fitMap()
+		{
+		map.fitToBounds(new LatLon(rndlatMax,rndlngMax), new LatLon(rndlatMin,rndlngMin));
 		}
 
 }

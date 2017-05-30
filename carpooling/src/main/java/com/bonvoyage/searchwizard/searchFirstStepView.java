@@ -16,7 +16,9 @@ import com.vaadin.data.validator.DateRangeValidator;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Slider;
 import com.vaadin.ui.TextField;
@@ -33,12 +35,13 @@ public class searchFirstStepView extends VerticalLayout{
 	 */
 	private static final long serialVersionUID = 4198348412596061090L;
 	private CarpoolingUI ui;
+	private HorizontalLayout bottom = new HorizontalLayout();
 	private Label titleLabel = new Label();
 	private Label subtitleLabel = new Label();
 	private TextField departureField = new TextField();
 	private TextField arrivalField = new TextField();
 	private DateField departureTime = new DateField();
-	private Slider meterSlide = new Slider();
+	private ComboBox detourSelect = new ComboBox();
 	private UserProfile loggedUser = (UserProfile) UI.getCurrent().getSession().getAttribute(UserProfile.class);
 	private Transfer searchTran = new Transfer();
 	
@@ -49,13 +52,19 @@ public class searchFirstStepView extends VerticalLayout{
 		this.setSizeFull();
 		this.setSpacing(true);
 		this.setMargin(true);
-		this.addComponents(titleLabel,subtitleLabel,departureField,arrivalField,departureTime,meterSlide);
+		this.addComponents(titleLabel,subtitleLabel,departureField,arrivalField,bottom);
 		this.setComponentAlignment(titleLabel, Alignment.TOP_CENTER);
 		this.setComponentAlignment(subtitleLabel, Alignment.TOP_CENTER);
 		this.setComponentAlignment(departureField, Alignment.TOP_CENTER);
 		this.setComponentAlignment(arrivalField, Alignment.TOP_CENTER);
-		this.setComponentAlignment(departureTime, Alignment.TOP_CENTER);
-		this.setComponentAlignment(meterSlide, Alignment.TOP_CENTER);
+		this.setComponentAlignment(bottom,Alignment.TOP_CENTER);
+		bottom.addComponents(departureTime,detourSelect);
+		bottom.setSpacing(true);
+		bottom.setWidth("80%");
+		bottom.setComponentAlignment(departureTime, Alignment.MIDDLE_LEFT);
+		bottom.setComponentAlignment(detourSelect, Alignment.MIDDLE_RIGHT);
+		//this.setComponentAlignment(departureTime, Alignment.TOP_CENTER);
+		//this.setComponentAlignment(detourSelect, Alignment.TOP_CENTER);
 		//this.addStyleName("search_background");
 		//titleLabel.setWidth("100%");
 		//subtitleLabel.setWidth("100%");
@@ -82,15 +91,22 @@ public class searchFirstStepView extends VerticalLayout{
 		DateRangeValidator depTimeVal = new DateRangeValidator("You cannot turn back time!", new Date(System.currentTimeMillis()), null, Resolution.MINUTE);
 		departureTime.addValidator(depTimeVal);
 		departureTime.setValue(new Date(System.currentTimeMillis()));
-		meterSlide.setMin(100);
-		meterSlide.setMax(1500);
-		meterSlide.setImmediate(true);
-		int meterChosen =meterSlide.getValue().intValue();
+		detourSelect.setCaptionAsHtml(true);
+		detourSelect.setCaption(BvStringUtils.bvColorizeWord("Detour Range"));
+		detourSelect.setImmediate(true);
+		for(double i=100;i<=1500;i=i+100)
+			{
+			detourSelect.addItem(i);
+			}
+		detourSelect.setValue((double)300);
+		//detourSelect.setHeight("100%");
+		
+		/*int meterChosen =detourSelect.getValue().intValue();
 		 String sliderStringValue = String.valueOf(meterChosen);
-		meterSlide.setCaption(sliderStringValue);
+		detourSelect.setCaption(sliderStringValue);*/
 		
 		//this.setExpandRatio(departureTime, 100);
-		this.setExpandRatio(departureTime, 100);
+		this.setExpandRatio(bottom, 100);
 		
 		
 		///Data Properties///
@@ -129,6 +145,7 @@ public class searchFirstStepView extends VerticalLayout{
 			 searchTran.setDep_time(departureTime.getValue().getTime());
 			 searchTran.setDep_addr(departureField.getValue());
 			 searchTran.setArr_addr(arrivalField.getValue());
+			 searchTran.setDet_range((double)detourSelect.getValue());
 			 UI.getCurrent().getSession().setAttribute("search_tran",searchTran);
 		 	}
 		}

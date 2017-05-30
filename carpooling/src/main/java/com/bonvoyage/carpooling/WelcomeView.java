@@ -40,6 +40,7 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 import com.vaadin.ui.Table;
@@ -49,6 +50,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.Accordion;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Window.CloseEvent;
 
 public class WelcomeView extends Landpage {
@@ -59,11 +61,13 @@ public class WelcomeView extends Landpage {
 private CarpoolingUI ui;
 private HistorySubWindowView subwin =new HistorySubWindowView(ui);
 private UserProfile loggedUser = null;
-private Accordion content = new Accordion();
+private Accordion driverContent = new Accordion();
+private Accordion passengerContent = new Accordion();
 private VerticalLayout testLay = new VerticalLayout();
 private Label testLab = new Label("BLA BLA BLA");
 private VerticalLayout testLay2 = new VerticalLayout();
 private Label testLab2 = new Label("BLA BLA BLA");
+private TabSheet serviceSelectionContent = new TabSheet();
 
 
 public WelcomeView(CarpoolingUI ui) throws JsonParseException, JsonMappingException, IOException
@@ -106,16 +110,19 @@ public WelcomeView(CarpoolingUI ui) throws JsonParseException, JsonMappingExcept
 	
 	
 	/////test content portion fo the welcomepage
-	super.rightSplitVertical.addComponent(content);
+	super.rightSplitVertical.addComponent(serviceSelectionContent);
+	serviceSelectionContent.setSizeFull();
+	serviceSelectionContent.addTab(driverContent, "My offerings", FontAwesome.CAB);
+	serviceSelectionContent.addTab(passengerContent, "My ride requests",FontAwesome.USERS);
 	testLay.setSizeFull();
 	testLay.addComponent(testLab);
 	testLay2.addComponent(testLab2);
-	content.addTab(testLay,"test1");
-	content.addTab(testLay2, "test2");
-	content.addStyleName("animated");
-	content.addStyleName("fadeInUpBig");
-	content.addStyleName("delay15");
-	content.addSelectedTabChangeListener(new SelectedTabChangeListener(){
+	driverContent.addTab(testLay,"test1");
+	driverContent.addTab(testLay2, "test2");
+	driverContent.addStyleName("animated");
+	driverContent.addStyleName("fadeInUpBig");
+	driverContent.addStyleName("delay15");
+	driverContent.addSelectedTabChangeListener(new SelectedTabChangeListener(){
 
 		/**
 		 * 
@@ -124,9 +131,23 @@ public WelcomeView(CarpoolingUI ui) throws JsonParseException, JsonMappingExcept
 
 		@Override
 		public void selectedTabChange(SelectedTabChangeEvent event) {
-			content.removeStyleName("delay15");
-			content.removeStyleName("fadeInUpBig");
-			content.removeStyleName("animated");
+			driverContent.removeStyleName("delay15");
+			driverContent.removeStyleName("fadeInUpBig");
+			driverContent.removeStyleName("animated");
+			
+		}});
+	passengerContent.addSelectedTabChangeListener(new SelectedTabChangeListener(){
+
+		@Override
+		public void selectedTabChange(SelectedTabChangeEvent event) {
+			Iterator<Component> iter = event.getTabSheet().iterator();
+			while(iter.hasNext())
+				{
+				TransferView tranView = (TransferView) iter.next();
+				//System.out.println("che è sta roba qua? "+tranView.get);
+				//tranView.fitMap();
+				}
+			
 			
 		}});
 	
@@ -140,9 +161,22 @@ public WelcomeView(CarpoolingUI ui) throws JsonParseException, JsonMappingExcept
 	while(iter.hasNext())
 		{
 		 Transfer tran = iter.next();
-		 String tabTitle ="TRIP FROM: "+tran.getDep_addr()+" TO: "+tran.getArr_addr()+" AVAILABLE SEATS:"+tran.getOcc_seats()+"/"+tran.getAva_seats();
-		 content.addTab(new TransferView(tran), tabTitle);
-		 //System.out.println(toPrint.toString());
+		 if(tran.getUser_role().equals("driver"))
+		 	{
+			 String tabTitle ="TRIP FROM: "+tran.getDep_addr()+" TO: "+tran.getArr_addr()+" AVAILABLE SEATS:"+tran.getOcc_seats()+"/"+tran.getAva_seats();
+			 TransferView toAdd = new TransferView(tran);
+			 toAdd.setImmediate(true);
+			 driverContent.addTab(toAdd, tabTitle);
+			 //toAdd.fitMap();
+			 //System.out.println(toPrint.toString());
+		 	}else
+		 		{
+		 		String tabTitle ="TRIP FROM: "+tran.getDep_addr()+" TO: "+tran.getArr_addr()+" REQUESTED SEATS:"+tran.getOcc_seats();
+		 		TransferView toAdd = new TransferView(tran);
+				 toAdd.setImmediate(true);
+		 		passengerContent.addTab(toAdd,tabTitle);
+		 		//toAdd.fitMap();
+		 		}
 		}
 	
 	///////////////////////////////////////////////
@@ -201,7 +235,11 @@ public WelcomeView(CarpoolingUI ui) throws JsonParseException, JsonMappingExcept
 				public void buttonClick(ClickEvent event) {
 					try {
 						TransferDAO.insert(UI.getCurrent().getSession().getAttribute(Transfer.class));
+						updateTransfersView();
 					} catch (JsonProcessingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -263,7 +301,11 @@ public WelcomeView(CarpoolingUI ui) throws JsonParseException, JsonMappingExcept
 				public void buttonClick(ClickEvent event) {
 					try {
 						TransferDAO.insert((Transfer) UI.getCurrent().getSession().getAttribute("search_tran"));
+						updateTransfersView();
 					} catch (JsonProcessingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -420,5 +462,27 @@ public Table getHistoryTable()
 public void setHistoryTable(Table tab)
 	{
 	 super.userHistory=tab;
+	}
+private void updateTransfersView() throws JsonParseException, JsonMappingException, IOException
+	{
+	driverContent.removeAllComponents();
+	passengerContent.removeAllComponents();
+	UserProfile thisUser =UI.getCurrent().getSession().getAttribute(UserProfile.class);
+	LinkedList<Transfer> test = TransferDAO.readMyOfferings(thisUser);
+	Iterator<Transfer> iter = test.iterator();
+	while(iter.hasNext())
+		{
+		 Transfer tran = iter.next();
+		 if(tran.getUser_role().equals("driver"))
+		 	{
+			 String tabTitle ="TRIP FROM: "+tran.getDep_addr()+" TO: "+tran.getArr_addr()+" AVAILABLE SEATS:"+tran.getOcc_seats()+"/"+tran.getAva_seats();
+			 driverContent.addTab(new TransferView(tran), tabTitle);
+			 //System.out.println(toPrint.toString());
+		 	}else
+		 		{
+		 		String tabTitle ="TRIP FROM: "+tran.getDep_addr()+" TO: "+tran.getArr_addr()+" REQUESTED SEATS:"+tran.getOcc_seats();
+		 		passengerContent.addTab(new TransferView(tran),tabTitle);
+		 		}
+		}
 	}
 }
