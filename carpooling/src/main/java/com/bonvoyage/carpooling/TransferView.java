@@ -1,13 +1,17 @@
 package com.bonvoyage.carpooling;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import com.bonvoyage.domain.McsaSolution;
 import com.bonvoyage.domain.TimedPoint2D;
 import com.bonvoyage.domain.Transfer;
+import com.bonvoyage.persistance.McsaSolutionDAO;
+import com.bonvoyage.utils.BvStringUtils;
 import com.google.maps.model.LatLng;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
@@ -17,8 +21,10 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.HorizontalLayout;
 
 public class TransferView extends VerticalLayout{
 	private Label mapTitleLabel = new Label("Your path");
@@ -26,6 +32,7 @@ public class TransferView extends VerticalLayout{
 	private Label arrLabel = new Label();
 	private Label timeLabel = new Label();
 	private Button fixMap = new Button();
+	private Button searchSolutionBtn = new Button();
 	private GoogleMap map = null;
 	
 	private HorizontalSplitPanel contentPanel = new HorizontalSplitPanel();
@@ -119,8 +126,51 @@ public class TransferView extends VerticalLayout{
 		 leftSide.setComponentAlignment(mapTitleLabel, Alignment.TOP_LEFT);
 		 leftSide.setComponentAlignment(map, Alignment.TOP_LEFT);
 		 leftSide.setExpandRatio(map, 1);
-		 rightSide.addComponents(depLabel,arrLabel,timeLabel,fixMap);
-		 fixMap.setCaption("fix map position");
+		 rightSide.addComponents(depLabel,arrLabel,timeLabel,fixMap,searchSolutionBtn);
+		 rightSide.setMargin(true);
+		 rightSide.setExpandRatio(timeLabel, 1);
+		 rightSide.setComponentAlignment(fixMap, Alignment.TOP_CENTER);
+		 rightSide.setComponentAlignment(searchSolutionBtn, Alignment.TOP_CENTER);
+		 rightSide.setSpacing(true);
+		 
+		 searchSolutionBtn.setCaptionAsHtml(true);
+		 searchSolutionBtn.setCaption(BvStringUtils.bvColorizeString("Look for solutions"));
+		 searchSolutionBtn.addClickListener(new Button.ClickListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -9024891871815325038L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				LinkedList<McsaSolution> results= new LinkedList<McsaSolution>();
+				System.out.println(tran.toString());
+				try {
+					results = McsaSolutionDAO.readComputedSolutions(tran.getUser_id(), tran.getTran_id());
+				} catch (IOException e) {
+					System.out.println("result list size: "+results.size());
+					e.printStackTrace();
+				}
+				if(results.size()==0)
+					{
+					try {
+						results = McsaSolutionDAO.searchSolutions(tran, 1800000, 5);
+						Iterator<McsaSolution> iter = results.iterator();
+						while(iter.hasNext())
+							{
+							System.out.println(iter.next().toString());
+							}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					}
+				
+			}
+		});
+		 fixMap.setCaptionAsHtml(true);
+		 fixMap.setCaption(BvStringUtils.bvColorizeString("Center Map"));
 		 fixMap.addClickListener(new Button.ClickListener() {
 			
 			/**
@@ -135,12 +185,18 @@ public class TransferView extends VerticalLayout{
 			}
 		});
 		 depLabel.setValue(tran.getDep_addr());
+		 depLabel.setCaptionAsHtml(true);
+		 depLabel.setCaption(BvStringUtils.bvColorizeWord("Your departure address:"));
 		 arrLabel.setValue(tran.getArr_addr());
+		 arrLabel.setCaptionAsHtml(true);
+		 arrLabel.setCaption(BvStringUtils.bvColorizeWord("Your arrival address:"));
 		 Date departure = new Date(tran.getDep_time());
 		 SimpleDateFormat sdf = new SimpleDateFormat();
 		 sdf.applyPattern("dd-MM-yy HH.mm");
 		 String depString = sdf.format(departure);
 		 timeLabel.setValue(depString);
+		 timeLabel.setCaptionAsHtml(true);
+		 timeLabel.setCaption(BvStringUtils.bvColorizeWord("Your departure time:"));
 		 contentPanel.setFirstComponent(leftSide);
 		 contentPanel.setSecondComponent(rightSide);
 		 this.addComponent(contentPanel);

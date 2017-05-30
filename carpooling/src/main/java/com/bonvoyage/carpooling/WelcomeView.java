@@ -161,6 +161,7 @@ public WelcomeView(CarpoolingUI ui) throws JsonParseException, JsonMappingExcept
 	while(iter.hasNext())
 		{
 		 Transfer tran = iter.next();
+		 System.out.println("reading users trnasfer: "+tran.toString());
 		 if(tran.getUser_role().equals("driver"))
 		 	{
 			 String tabTitle ="TRIP FROM: "+tran.getDep_addr()+" TO: "+tran.getArr_addr()+" AVAILABLE SEATS:"+tran.getOcc_seats()+"/"+tran.getAva_seats();
