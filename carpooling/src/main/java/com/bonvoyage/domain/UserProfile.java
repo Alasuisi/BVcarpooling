@@ -1,8 +1,14 @@
 package com.bonvoyage.domain;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class UserProfile {
+public class UserProfile implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5059845618785159138L;
 	private int profileID;
 	private int userID;
 	private String ntransit;

@@ -23,6 +23,7 @@ import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 
@@ -155,7 +156,7 @@ public class TransferView extends VerticalLayout{
 				if(results.size()==0)
 					{
 					try {
-						results = McsaSolutionDAO.searchSolutions(tran, 1800000, 5);
+						results = McsaSolutionDAO.searchSolutions(tran, 3000000, 50);
 						Iterator<McsaSolution> iter = results.iterator();
 						while(iter.hasNext())
 							{
@@ -166,6 +167,16 @@ public class TransferView extends VerticalLayout{
 						e.printStackTrace();
 					}
 					}
+				Window subWindow = new Window("Solution selection window");
+				subWindow.center();
+				subWindow.setImmediate(true);
+				subWindow.addStyleName("animated");
+				//subWindow.addStyleName("delay05");
+				subWindow.addStyleName("pulse");
+				subWindow.setWidth("800px");
+				subWindow.setHeight("600px");
+				subWindow.setContent(new SolutionView(results));
+				UI.getCurrent().addWindow(subWindow);
 				
 			}
 		});
