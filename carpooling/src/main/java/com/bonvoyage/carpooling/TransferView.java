@@ -175,6 +175,7 @@ public class TransferView extends VerticalLayout{
 				subWindow.addStyleName("pulse");
 				subWindow.setWidth("800px");
 				subWindow.setHeight("600px");
+				subWindow.setModal(true);
 				subWindow.setContent(new SolutionView(results));
 				UI.getCurrent().addWindow(subWindow);
 				
