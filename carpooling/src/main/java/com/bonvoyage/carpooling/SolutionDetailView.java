@@ -63,7 +63,7 @@ public class SolutionDetailView extends VerticalLayout{
 	private void drawSegments(LinkedList<McsaSegment> segList)
 		{
 		 Iterator<McsaSegment> iter = segList.iterator();
-		 boolean firstSegment=true;
+		 boolean firstTime=true;
 		 double latMax=-100;
 		 double latMin=100;
 		 double lngMax=-200;
@@ -81,6 +81,11 @@ public class SolutionDetailView extends VerticalLayout{
 				 double lat =thisPoint.getLatitude();
 				 double lng = thisPoint.getLongitude();
 				 LatLon latlng = new LatLon(lat,lng);
+				 if(lastSegPoint!=null&&firstTime) 
+				 	{
+					 points.add(lastSegPoint);
+					 firstTime=false;
+				 	}
 				 points.add(latlng);
 				 lastSegPoint=latlng;
 				 if(lat>latMax)latMax=lat;
@@ -88,8 +93,23 @@ public class SolutionDetailView extends VerticalLayout{
 				 if(lng>lngMax)lngMax=lng;
 				 if(lng<lngMin)lngMin=lng;
 			 	}
-			 System.out.println("ma portanna? "+getRandomColor());
-			 GoogleMapPolyline overlay = new GoogleMapPolyline(points, "#d31717", 0.8, 10);
+			 firstTime=true;
+			 String color = getRandomColor();
+			 GoogleMapPolyline overlay;
+			 if(seg.getFromTransferID()==seg.getToTransferID())
+			 	{
+				 overlay = new GoogleMapPolyline(points,color, 0.8, 10);
+				 String labelValue = "This path in this color are with a driver";
+				 Label toAdd=colorLabel(labelValue,color);
+				 rightContent.addComponent(toAdd);
+			 	}else
+			 		{
+			 		color="#000000";
+			 		overlay = new GoogleMapPolyline(points,color, 0.8, 10);
+					 String labelValue = "This path in this color is on foot";
+					 Label toAdd=colorLabel(labelValue,color);
+					 rightContent.addComponent(toAdd);
+			 		}
 			 map.addPolyline(overlay);
 		 	}
 		 map.fitToBounds(new LatLon(latMax,lngMax), new LatLon(latMin,lngMin));
@@ -104,6 +124,16 @@ public class SolutionDetailView extends VerticalLayout{
     return colorCode;
 	}
 	
+	private Label colorLabel(String value,String hexColor)
+		{
+		String colorTag="<font color="+hexColor+">";
+		String closeTag = "</font>";
+		String labelValue = colorTag+value+closeTag;
+		Label result = new Label();
+		result.setContentMode(ContentMode.HTML);
+		result.setValue(labelValue);
+		return result;
+		}
 	
 
 }
