@@ -111,7 +111,7 @@ public class SolutionDetailView extends VerticalLayout{
 		 while(iter.hasNext())
 		 	{
 			 McsaSegment seg = iter.next();
-			 double segLenght = GeocodingUtils.evaluateLenght(seg.getSegmentPath());
+			 double segLenght = Math.ceil(GeocodingUtils.evaluateLenght(seg.getSegmentPath()));
 			 if(departure==null) departure = new Date(seg.getSegmentDeparture());
 			 String ddayString = daySdf.format(departure);
 			 rightSub.setValue(BvStringUtils.bvColorizeWord(ddayString));

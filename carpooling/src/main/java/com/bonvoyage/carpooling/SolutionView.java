@@ -95,6 +95,7 @@ public class SolutionView extends VerticalLayout {
 				detailWindow.setModal(true);
 				//Label test = new Label(solDetail.get(solid).toString());
 				detailWindow.setContent(new SolutionDetailView(solDetail.get(solid)));
+				System.out.println("solution id "+solid);
 				UI.getCurrent().addWindow(detailWindow);
 				
 			}
