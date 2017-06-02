@@ -5,6 +5,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.gavaghan.geodesy.Ellipsoid;
+import org.gavaghan.geodesy.GeodeticCalculator;
+import org.gavaghan.geodesy.GlobalPosition;
+
 import com.bonvoyage.domain.TimedPoint2D;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -81,18 +85,51 @@ public class GeocodingUtils {
 		    throw new RuntimeException(e);
 		  }
 		}
+	public static double evaluateLenght(LinkedList<TimedPoint2D> path)
+		{
+		 TimedPoint2D previous=null;
+		 double lenght=0;
+		 Iterator<TimedPoint2D> iter = path.iterator();
+		 while(iter.hasNext())
+		 	{
+			 TimedPoint2D thisPoint = iter.next();
+			 if(previous==null)
+			 	{
+				 previous=thisPoint;
+			 	}else
+			 		{
+			 		 lenght=lenght+evaluateDistance(previous,thisPoint);
+			 		 previous=thisPoint;
+			 		}
+		 	}
+		 return lenght;
+		}
+	public static double evaluateDistance(TimedPoint2D pPoint,TimedPoint2D dPoint)
+		{
+		Point2D.Double secondPoint = new Point2D.Double(dPoint.getLatitude(), dPoint.getLongitude());
+		return evaluateDistance(pPoint,secondPoint);
+		}
 	
-	/*public RouteDistanceDurvoidation getDistanceAndDurationForDirection(RouteLocation startLocation,RouteLocation destinationLocation){
-		  LatLng origin=new LatLng(startLocation.getLat(),startLocation.getLng());
-		  LatLng destination=new LatLng(destinationLocation.getLat(),destinationLocation.getLng());
-		  try {
-		    DistanceMatrix distanceMatrix=DistanceMatrixApi.newRequest(geoApiContext).origins(origin).destinations(destination).await();
-		    if (distanceMatrix.rows.length == 0 || distanceMatrix.rows[0].elements.length == 0)     throw new RuntimeException("No distance and duration found.");
-		    return new RouteDistanceDuration(distanceMatrix.rows[0].elements[0].distance.inMeters,distanceMatrix.rows[0].elements[0].duration.inSeconds);
-		  }
-		 catch (  Exception e) {
-		    e.printStackTrace();
-		    throw new RuntimeException(e);
-		  }
-		}*/
+	public static double evaluateDistance(TimedPoint2D pPoint,Point2D.Double dPoint)
+		{
+		/*double dlon = pPoint.getLongitude()-dPoint.getLongitude();
+		double dlat = pPoint.getLatitude()-dPoint.getLatitude();
+		double a = Math.pow((Math.sin(dlat/2)),2) + Math.cos(dPoint.getLatitude());
+		
+				dlon = lon2 - lon1 
+				dlat = lat2 - lat1 
+				a = (sin(dlat/2))^2 + cos(lat1) * cos(lat2) * (sin(dlon/2))^2 
+				c = 2 * atan2( sqrt(a), sqrt(1-a) ) 
+				d = R * c (where R is the radius of the Earth)*/
+		GeodeticCalculator geoCalc = new GeodeticCalculator();
+	
+		Ellipsoid reference = Ellipsoid.WGS84;  
+	
+		GlobalPosition pointA = new GlobalPosition(dPoint.getX(), dPoint.getY(), 0.0); // Point A
+	
+		GlobalPosition userPos = new GlobalPosition(pPoint.getLatitude(), pPoint.getLongitude(), 0.0); // Point B
+	
+		double distance = geoCalc.calculateGeodeticCurve(reference, userPos, pointA).getEllipsoidalDistance(); // Distance between Point A and Point B
+		return distance;
+		}
 }

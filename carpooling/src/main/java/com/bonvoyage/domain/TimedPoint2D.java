@@ -2,10 +2,15 @@ package com.bonvoyage.domain;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
+import java.io.Serializable;
 
-public class TimedPoint2D{
+public class TimedPoint2D implements Serializable{
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -657238842734011237L;
 	private double latitude;
 	private double longitude;
 	private long touchTime;

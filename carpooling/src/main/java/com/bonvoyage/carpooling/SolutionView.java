@@ -91,7 +91,7 @@ public class SolutionView extends VerticalLayout {
 				detailWindow.addStyleName("animated");
 				detailWindow.addStyleName("pulse");
 				detailWindow.setWidth("1200px");
-				detailWindow.setHeight("600px");
+				detailWindow.setHeight("800px");
 				detailWindow.setModal(true);
 				//Label test = new Label(solDetail.get(solid).toString());
 				detailWindow.setContent(new SolutionDetailView(solDetail.get(solid)));

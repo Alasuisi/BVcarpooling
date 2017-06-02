@@ -1,5 +1,6 @@
 package com.bonvoyage.domain;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,7 +10,11 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 
 
-public class McsaSolution {
+public class McsaSolution implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4355414580232511864L;
 	private int solutionID;
 	private int changes=0;
 	private int neededSeats=0;

@@ -1,9 +1,14 @@
 package com.bonvoyage.domain;
 
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 
 
-public class McsaConnection {
+public class McsaConnection implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9200941767919514440L;
 	int departure_station; 
 	int arrival_station;
     long departure_timestamp; 

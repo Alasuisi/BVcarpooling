@@ -1,5 +1,6 @@
 package com.bonvoyage.domain;
 
+import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,7 +24,12 @@ import org.gavaghan.geodesy.Ellipsoid;
 import org.gavaghan.geodesy.GeodeticCalculator;
 import org.gavaghan.geodesy.GlobalPosition;
 
-public class McsaSegment {
+public class McsaSegment implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4643151291415390492L;
+
 	public McsaSegment(){};
 	public McsaSegment(int fromTransferID, int toTransferID, boolean animal, boolean handicap, boolean luggage,
 			boolean smoke, long segmentDeparture, long segmentArrival, long departureWaitTime, long segmentDuration,

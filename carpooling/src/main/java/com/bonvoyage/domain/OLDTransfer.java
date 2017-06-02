@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,7 +19,11 @@ import com.google.maps.model.LatLng;
 
 
 
-public class OLDTransfer {
+public class OLDTransfer implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 142091082495419835L;
 	private int tran_id;
 	private int user_id;
 	private int prof_id;
