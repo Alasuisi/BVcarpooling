@@ -12,7 +12,10 @@ import com.bonvoyage.domain.TimedPoint2D;
 import com.bonvoyage.domain.Transfer;
 import com.bonvoyage.persistance.McsaSolutionDAO;
 import com.bonvoyage.utils.BvStringUtils;
+import com.bonvoyage.utils.DaoException;
 import com.google.maps.model.LatLng;
+import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
@@ -149,7 +152,7 @@ public class TransferView extends VerticalLayout{
 				System.out.println(tran.toString());
 				try {
 					results = McsaSolutionDAO.readComputedSolutions(tran.getUser_id(), tran.getTran_id());
-				} catch (IOException e) {
+				} catch (IOException | ClientHandlerException | UniformInterfaceException | DaoException e) {
 					System.out.println("result list size: "+results.size());
 					e.printStackTrace();
 				}
@@ -162,7 +165,7 @@ public class TransferView extends VerticalLayout{
 							{
 							System.out.println(iter.next().toString());
 							}
-					} catch (IOException e) {
+					} catch (IOException | DaoException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -176,7 +179,7 @@ public class TransferView extends VerticalLayout{
 				subWindow.setWidth("800px");
 				subWindow.setHeight("600px");
 				subWindow.setModal(true);
-				subWindow.setContent(new SolutionView(results));
+				subWindow.setContent(new SolutionView(results,tran.getUser_id(),tran.getTran_id()));
 				UI.getCurrent().addWindow(subWindow);
 				
 			}

@@ -1,17 +1,27 @@
 package com.bonvoyage.carpooling;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
 import com.bonvoyage.domain.McsaSegment;
+import com.bonvoyage.domain.McsaSolution;
+import com.bonvoyage.domain.SolDetGridRow;
 import com.bonvoyage.domain.TimedPoint2D;
+import com.bonvoyage.persistance.McsaSolutionDAO;
 import com.bonvoyage.utils.BvStringUtils;
+import com.bonvoyage.utils.DaoException;
 import com.bonvoyage.utils.GeocodingUtils;
+import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.UniformInterfaceException;
+import com.vaadin.data.Container.Indexed;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
@@ -22,7 +32,12 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -42,9 +57,18 @@ public class SolutionDetailView extends VerticalLayout{
 	private Label fooLabel = new Label();
 	private Grid rideDetails = new Grid();
 	private Button bookButton = new Button();
+	private LinkedList<GoogleMapPolyline> polyList = new LinkedList<GoogleMapPolyline>();
+	private LinkedList<SolDetGridRow> rows=new LinkedList<SolDetGridRow>();
+	private BeanItemContainer<SolDetGridRow> container= new BeanItemContainer<SolDetGridRow>(SolDetGridRow.class,rows);
+	private int userid;
+	private int tranid;
+	private int solid;
 	
-	public SolutionDetailView(LinkedList<McsaSegment> details)
+	public SolutionDetailView(LinkedList<McsaSegment> details,int userid,int tranid,int solid)
 		{
+		this.userid=userid;
+		this.tranid=tranid;
+		this.solid=solid;
 		 titleLabel.setContentMode(ContentMode.HTML);
 		 subtitleLabel.setContentMode(ContentMode.HTML);
 		 titleLabel.setValue(BvStringUtils.bvColorizeWord("Solution Details"));
@@ -54,10 +78,47 @@ public class SolutionDetailView extends VerticalLayout{
 		 titleLabel.addStyleName(ValoTheme.LABEL_HUGE);
 		 this.setSizeFull();
 		 this.setSpacing(true);
-		 this.addComponents(titleLabel,subtitleLabel,mainLayout);
+		 this.addComponents(titleLabel,subtitleLabel,mainLayout,fooLabel);
 		 this.setComponentAlignment(titleLabel, Alignment.TOP_CENTER);
 		 this.setComponentAlignment(subtitleLabel, Alignment.TOP_CENTER);
 		 this.setExpandRatio(mainLayout, 1);
+		 rideDetails.setImmediate(true);
+		// instantiateGrid();
+		 mainLayout.setSizeFull();
+		 mainLayout.addComponents(leftContent,rightContent);
+		 mainLayout.setSpacing(true);
+		 mainLayout.setMargin(true);
+		 leftContent.setSizeFull();
+		 rightContent.setSizeFull();
+		 rideDetails= new Grid("Segments",container);
+		 rightContent.addComponents(rightTitle,rightSub,rideDetails,bookButton);
+		 rightTitle.setSizeUndefined();
+		 rightSub.setSizeUndefined();
+		 fooLabel.setValue("Notice: black segments real path will be evaluated when the solution will be booked");
+		 fooLabel.setSizeUndefined();
+		 rightContent.setComponentAlignment(rightTitle, Alignment.TOP_CENTER);
+		 rightContent.setComponentAlignment(rightSub, Alignment.TOP_CENTER);
+		 rightContent.setComponentAlignment(rideDetails, Alignment.TOP_CENTER);
+		 this.setComponentAlignment(fooLabel, Alignment.MIDDLE_CENTER);
+		 rightContent.setComponentAlignment(bookButton, Alignment.TOP_CENTER);
+		 bookButton.setCaptionAsHtml(true);
+		 bookButton.setCaption(BvStringUtils.bvColorizeString("Book this ride!!"));
+		 rightTitle.setContentMode(ContentMode.HTML);
+		 rightTitle.setValue(BvStringUtils.bvColorizeWord("You depart on:"));
+		 rightTitle.addStyleName(ValoTheme.LABEL_HUGE);
+		 rightSub.setContentMode(ContentMode.HTML);
+		 rightContent.setExpandRatio(rideDetails, 1);
+		 rightContent.setSpacing(true);
+		 rideDetails.setSizeFull();
+		 leftContent.addComponent(map);
+		 map.setSizeFull();
+		 map.setImmediate(true);
+		 setDataForView(details);
+		 setBookRideBtn(details);
+		 
+		}
+	private void instantiateGrid()
+		{
 		 Column waitCol =rideDetails.addColumn("Wait time",String.class);
 		 Column hopInCol=rideDetails.addColumn("Hop in at",String.class);
 		 Column hopOutCol =rideDetails.addColumn("Hop of at",String.class);
@@ -66,38 +127,52 @@ public class SolutionDetailView extends VerticalLayout{
 		 hopInCol.setRenderer(new HtmlRenderer());
 		 hopOutCol.setRenderer(new HtmlRenderer());
 		 segLenCol.setRenderer(new HtmlRenderer());
-		 mainLayout.setSizeFull();
-		 mainLayout.addComponents(leftContent,rightContent);
-		 mainLayout.setSpacing(true);
-		 mainLayout.setMargin(true);
-		 leftContent.setSizeFull();
-		 rightContent.setSizeFull();
-		 rightContent.addComponents(rightTitle,rightSub,rideDetails,fooLabel,bookButton);
-		 rightTitle.setSizeUndefined();
-		 rightSub.setSizeUndefined();
-		 fooLabel.setSizeFull();
-		 rightContent.setComponentAlignment(rightTitle, Alignment.TOP_CENTER);
-		 rightContent.setComponentAlignment(rightSub, Alignment.TOP_CENTER);
-		 rightContent.setComponentAlignment(rideDetails, Alignment.TOP_CENTER);
-		 rightContent.setComponentAlignment(fooLabel, Alignment.MIDDLE_LEFT);
-		 rightContent.setComponentAlignment(bookButton, Alignment.TOP_CENTER);
-		 bookButton.setCaptionAsHtml(true);
-		 bookButton.setCaption(BvStringUtils.bvColorizeString("Book this ride!!"));
-		 fooLabel.setValue("Notice: black segments real path will be evaluated when the solution will be booked");
-		 rightTitle.setContentMode(ContentMode.HTML);
-		 rightTitle.setValue(BvStringUtils.bvColorizeWord("You depart on:"));
-		 rightTitle.addStyleName(ValoTheme.LABEL_HUGE);
-		 rightSub.setContentMode(ContentMode.HTML);
-		 rightContent.setExpandRatio(rideDetails, 1);
-		 rideDetails.setSizeFull();
-		 leftContent.addComponent(map);
-		 map.setSizeFull();
-		 map.setImmediate(true);
-		 setDataForView(details);
-		 
+		}
+	private void setBookRideBtn(LinkedList<McsaSegment> details)
+		{
+		bookButton.addClickListener(new Button.ClickListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 4115737125365447340L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				//setDataForView(details);
+				//rideDetails.removeAllColumns();
+				//rideDetails=new Grid();
+				//instantiateGrid();
+				//setDataForView(details);
+				McsaSolution updated=null;
+				try {
+					updated =McsaSolutionDAO.bookRide(userid, tranid, solid);
+				} catch (ClientHandlerException | UniformInterfaceException | DaoException | IOException e) {
+					Notification error = new Notification("Error", e.getMessage(), Type.ERROR_MESSAGE);
+					error.show(UI.getCurrent().getPage());
+					e.printStackTrace();
+				}
+				LinkedList<McsaSegment> updatedSol = updated.getSolution();
+				setDataForView(updatedSol);
+				/*rows=new LinkedList<SolDetGridRow>();
+				SolDetGridRow portanna = new SolDetGridRow("dio", "cane", "maledetto", "rotto", "in culo");
+				rows.add(portanna);
+				setGrid();
+				System.out.println("Portanna");*/
+			}
+		});
 		}
 	private void setDataForView(LinkedList<McsaSegment> segList)
 		{
+
+		 if(polyList.size()!=0)
+		 	{
+			 Iterator<GoogleMapPolyline> politer = polyList.iterator();
+			 while(politer.hasNext())
+			 	{
+				 map.removePolyline(politer.next());
+			 	}
+		 	}
 		 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		 SimpleDateFormat daySdf = new SimpleDateFormat("EEEE, dd/MM/yyyy");
 		 Iterator<McsaSegment> iter = segList.iterator();
@@ -142,28 +217,56 @@ public class SolutionDetailView extends VerticalLayout{
 			 if(seg.getFromTransferID()==seg.getToTransferID())
 			 	{
 				 overlay = new GoogleMapPolyline(points,color, 0.8, 10);
-				 String labelValue = "This path in this color are with a driver";
-				 Label toAdd=colorLabel(labelValue,color);
+				 //String labelValue = "This path in this color are with a driver";
+				 //Label toAdd=colorLabel(labelValue,color);
 				 //rightContent.addComponent(toAdd);
 			 	}else
 			 		{
 			 		color="#000000";
 			 		overlay = new GoogleMapPolyline(points,color, 0.8, 10);
 					 String labelValue = "This path in this color is on foot";
-					 Label toAdd=colorLabel(labelValue,color);
+					 //Label toAdd=colorLabel(labelValue,color);
 					// rightContent.addComponent(toAdd);
 			 		}
 			 map.addPolyline(overlay);
+			 polyList.add(overlay);
 			 String waitString = timeToString(seg.getDepartureWaitTime());
 			 String depString =colorString(sdf.format(new Date(seg.getSegmentDeparture())),color);
 			 String arrString = colorString(sdf.format(new Date(seg.getSegmentArrival())),color);
 			 String segDuration = timeToString(seg.getSegmentDuration());
 			 String segLenString = colorString(""+segLenght,color);
+			 SolDetGridRow toAdd = new SolDetGridRow(waitString,depString,arrString,segDuration,segLenString);
+			 rows.add(toAdd);
 			 System.out.println("segment duration "+seg.getSegmentDuration());
-			 rideDetails.addRow(waitString,depString,arrString,segDuration,segLenString);
+			 //rideDetails.addRow(waitString,depString,arrString,segDuration,segLenString);
 		 	}
+		 System.out.println("how many rows? "+rows.size());
+		 setGrid();
 		 map.fitToBounds(new LatLon(latMax,lngMax), new LatLon(latMin,lngMin));
 		 System.out.println("Number of segment is: "+segList.size());
+		}
+	
+	private  void setGrid()
+		{
+		 rightContent.removeComponent(rideDetails);
+		 container= new BeanItemContainer<SolDetGridRow>(SolDetGridRow.class,rows);
+		 rideDetails = new Grid(container);
+		 rideDetails.getColumn("waitString").setHeaderCaption("Wait Time");
+		 rideDetails.getColumn("depString").setHeaderCaption("Hop in at");
+		 rideDetails.getColumn("arrString").setHeaderCaption("Hop off at");
+		 rideDetails.getColumn("segDuration").setHeaderCaption("Segment duration");
+		 rideDetails.getColumn("segLenString").setHeaderCaption("Segment length");
+		 rideDetails.getColumn("waitString").setRenderer(new HtmlRenderer());
+		 rideDetails.getColumn("depString").setRenderer(new HtmlRenderer());
+		 rideDetails.getColumn("arrString").setRenderer(new HtmlRenderer());
+		 rideDetails.getColumn("segDuration").setRenderer(new HtmlRenderer());
+		 rideDetails.getColumn("segLenString").setRenderer(new HtmlRenderer());
+		 rideDetails.setColumnOrder("waitString","depString","arrString","segDuration","segLenString");
+		 //rideDetails.markAsDirty();
+		 rightContent.addComponent(rideDetails, 2);
+		 rightContent.setComponentAlignment(rideDetails, Alignment.TOP_CENTER);
+		 rightContent.setExpandRatio(rideDetails, 1);
+		 rideDetails.setSizeFull();
 		}
 	
 	private static String getRandomColor()

@@ -31,7 +31,7 @@ public class SolutionView extends VerticalLayout {
 	private Grid grid;
 	private VerticalLayout needsLayout=new VerticalLayout();
 
-	public SolutionView(LinkedList<McsaSolution> solList)
+	public SolutionView(LinkedList<McsaSolution> solList,int userid,int tranId)
 		{
 		 this.setSizeFull();
 		 this.setImmediate(true);
@@ -94,7 +94,7 @@ public class SolutionView extends VerticalLayout {
 				detailWindow.setHeight("800px");
 				detailWindow.setModal(true);
 				//Label test = new Label(solDetail.get(solid).toString());
-				detailWindow.setContent(new SolutionDetailView(solDetail.get(solid)));
+				detailWindow.setContent(new SolutionDetailView(solDetail.get(solid),userid,tranId,solid.intValue()));
 				System.out.println("solution id "+solid);
 				UI.getCurrent().addWindow(detailWindow);
 				

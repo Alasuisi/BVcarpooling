@@ -15,6 +15,7 @@ public class McsaSolution implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -4355414580232511864L;
+	private int transferID;
 	private int solutionID;
 	private int changes=0;
 	private int neededSeats=0;
@@ -47,6 +48,14 @@ public class McsaSolution implements Serializable{
 		this.solutionID = solutionID;
 	}
 
+
+	public int getTransferID() {
+		return transferID;
+	}
+
+	public void setTransferID(int transferID) {
+		this.transferID = transferID;
+	}
 
 	public void setChanges(int changes) {
 		this.changes = changes;
