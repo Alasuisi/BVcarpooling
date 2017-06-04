@@ -79,4 +79,35 @@ public static McsaSolution bookRide(int userid,int tranid,int solid) throws Clie
 	 return result;
 	}
 
+public static String deleteReservation(int userid,int tranid) throws ClientHandlerException, UniformInterfaceException, DaoException
+	{
+	Client client = Client.create();
+	String address="http://localhost:8080/bvcrplbe/BookRide/"+userid+"/"+tranid;
+	WebResource resource= client.resource(address);
+	ClientResponse response = resource.delete(ClientResponse.class);
+	if(response.getStatus()!=200)
+		{
+		throw new DaoException("Failed : HTTP error code : " + response.getStatus()+System.lineSeparator()+response.getEntity(String.class));
+		}else return response.getEntity(String.class);
+	}
+
+public static LinkedList<McsaSolution> getAllBookedReservations(int userid) throws ClientHandlerException, UniformInterfaceException, DaoException, JsonParseException, JsonMappingException, IOException
+	{
+	Client client = Client.create();
+	 String address="http://localhost:8080/bvcrplbe/BookRide/"+userid;
+	 WebResource resource = client.resource(address);
+	 ClientResponse response = resource.type(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+	 if(response.getStatus()!=200)
+	 	{
+		 throw new DaoException("Failed : HTTP error code : " + response.getStatus()+System.lineSeparator()+response.getEntity(String.class));
+	 	}else
+	 		{
+	 		ObjectMapper mapper = new ObjectMapper();
+	 		String output = response.getEntity(String.class);
+	 		LinkedList<McsaSolution> result = new LinkedList<McsaSolution>();
+	 		result = mapper.readValue(output, new TypeReference<LinkedList<McsaSolution>>(){});
+	 		return result;
+	 		}
+	}
+
 }

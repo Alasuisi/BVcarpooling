@@ -1,5 +1,6 @@
 package com.bonvoyage.carpooling;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.RowReference;
+import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -30,12 +32,15 @@ public class SolutionView extends VerticalLayout {
 	private static final long serialVersionUID = -8161596592089809122L;
 	private Grid grid;
 	private VerticalLayout needsLayout=new VerticalLayout();
-
-	public SolutionView(LinkedList<McsaSolution> solList,int userid,int tranId)
+	private Window parent;
+	private WelcomeView parentView;
+	public SolutionView(WelcomeView parentView,Window parent,LinkedList<McsaSolution> solList,int userid,int tranId)
 		{
 		 this.setSizeFull();
 		 this.setImmediate(true);
 		 this.setSpacing(true);
+		 this.parent=parent;
+		 this.parentView=parentView;
 		 //BeanItemContainer<McsaSolution> itemContainer =  new BeanItemContainer<McsaSolution>(McsaSolution.class, solList);
 		 //itemContainer.addNestedContainerBean("solution");
 		 //solutionGrid = new Grid("Computed solutions",itemContainer);
@@ -94,7 +99,25 @@ public class SolutionView extends VerticalLayout {
 				detailWindow.setHeight("800px");
 				detailWindow.setModal(true);
 				//Label test = new Label(solDetail.get(solid).toString());
-				detailWindow.setContent(new SolutionDetailView(solDetail.get(solid),userid,tranId,solid.intValue()));
+				detailWindow.setContent(new SolutionDetailView(parentView,detailWindow,solDetail.get(solid),userid,tranId,solid.intValue(),false,false));
+				detailWindow.addCloseListener(new Window.CloseListener() {
+					
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1179148939572272077L;
+
+					@Override
+					public void windowClose(CloseEvent e) {
+						parent.close();
+						try {
+							parentView.updateTransfersView();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				});
 				System.out.println("solution id "+solid);
 				UI.getCurrent().addWindow(detailWindow);
 				

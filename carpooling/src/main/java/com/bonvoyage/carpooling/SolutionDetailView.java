@@ -18,10 +18,13 @@ import com.bonvoyage.persistance.McsaSolutionDAO;
 import com.bonvoyage.utils.BvStringUtils;
 import com.bonvoyage.utils.DaoException;
 import com.bonvoyage.utils.GeocodingUtils;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.vaadin.data.Container.Indexed;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
@@ -36,6 +39,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.renderers.HtmlRenderer;
@@ -47,6 +51,7 @@ public class SolutionDetailView extends VerticalLayout{
 	 */
 	private static final long serialVersionUID = 119319351706147874L;
 	private HorizontalLayout mainLayout = new HorizontalLayout();
+	private VerticalLayout mainLayoutAlt = new VerticalLayout();
 	private VerticalLayout leftContent = new VerticalLayout();
 	private VerticalLayout rightContent = new VerticalLayout();
 	private GoogleMap map = new GoogleMap("AIzaSyBA-NgbRwnecHN3cApbnZoaCZH0ld66fT4", null, "english");
@@ -63,12 +68,18 @@ public class SolutionDetailView extends VerticalLayout{
 	private int userid;
 	private int tranid;
 	private int solid;
+	private Window parent;
+	private WelcomeView parentView;
+	private boolean booked;
 	
-	public SolutionDetailView(LinkedList<McsaSegment> details,int userid,int tranid,int solid)
+	public SolutionDetailView(WelcomeView parentView,Window parent,LinkedList<McsaSegment> details,int userid,int tranid,int solid,boolean booked,boolean vertical)
 		{
 		this.userid=userid;
 		this.tranid=tranid;
 		this.solid=solid;
+		this.parent=parent;
+		this.booked=booked;
+		this.parentView=parentView;
 		 titleLabel.setContentMode(ContentMode.HTML);
 		 subtitleLabel.setContentMode(ContentMode.HTML);
 		 titleLabel.setValue(BvStringUtils.bvColorizeWord("Solution Details"));
@@ -78,16 +89,27 @@ public class SolutionDetailView extends VerticalLayout{
 		 titleLabel.addStyleName(ValoTheme.LABEL_HUGE);
 		 this.setSizeFull();
 		 this.setSpacing(true);
-		 this.addComponents(titleLabel,subtitleLabel,mainLayout,fooLabel);
+		 if(!vertical)this.addComponents(titleLabel,subtitleLabel,mainLayout,fooLabel);   //////
+		 else this.addComponents(titleLabel,subtitleLabel,mainLayoutAlt,fooLabel);
 		 this.setComponentAlignment(titleLabel, Alignment.TOP_CENTER);
 		 this.setComponentAlignment(subtitleLabel, Alignment.TOP_CENTER);
-		 this.setExpandRatio(mainLayout, 1);
+		 if(!vertical)this.setExpandRatio(mainLayout, 1);    //////
+		 else this.setExpandRatio(mainLayoutAlt, 1);
 		 rideDetails.setImmediate(true);
 		// instantiateGrid();
-		 mainLayout.setSizeFull();
-		 mainLayout.addComponents(leftContent,rightContent);
-		 mainLayout.setSpacing(true);
-		 mainLayout.setMargin(true);
+		 if(!vertical)
+		 {
+			 mainLayout.setSizeFull();
+			 mainLayout.addComponents(leftContent,rightContent);
+			 mainLayout.setSpacing(true);
+			 mainLayout.setMargin(true);
+		 }else
+		 	{
+			 mainLayoutAlt.setSizeFull();
+			 mainLayoutAlt.addComponents(leftContent,rightContent);
+			 mainLayoutAlt.setSpacing(true);
+			 mainLayoutAlt.setMargin(true);
+		 	}
 		 leftContent.setSizeFull();
 		 rightContent.setSizeFull();
 		 rideDetails= new Grid("Segments",container);
@@ -101,13 +123,23 @@ public class SolutionDetailView extends VerticalLayout{
 		 rightContent.setComponentAlignment(rideDetails, Alignment.TOP_CENTER);
 		 this.setComponentAlignment(fooLabel, Alignment.MIDDLE_CENTER);
 		 rightContent.setComponentAlignment(bookButton, Alignment.TOP_CENTER);
-		 bookButton.setCaptionAsHtml(true);
-		 bookButton.setCaption(BvStringUtils.bvColorizeString("Book this ride!!"));
+		 if(!booked)
+		 	{
+			 bookButton.setCaptionAsHtml(true);
+			 bookButton.setCaption(BvStringUtils.bvColorizeString("Book this ride!!"));
+			 bookButton.setImmediate(true);
+		 	}else
+		 		{
+		 		bookButton.setCaption("Cancel reservation");
+				bookButton.addStyleName(ValoTheme.BUTTON_DANGER);
+				bookButton.markAsDirty();
+		 		}
 		 rightTitle.setContentMode(ContentMode.HTML);
 		 rightTitle.setValue(BvStringUtils.bvColorizeWord("You depart on:"));
 		 rightTitle.addStyleName(ValoTheme.LABEL_HUGE);
 		 rightSub.setContentMode(ContentMode.HTML);
-		 rightContent.setExpandRatio(rideDetails, 1);
+		 if(!vertical)rightContent.setExpandRatio(rideDetails, 1);
+		 else mainLayoutAlt.setExpandRatio(leftContent, 1);
 		 rightContent.setSpacing(true);
 		 rideDetails.setSizeFull();
 		 leftContent.addComponent(map);
@@ -139,26 +171,56 @@ public class SolutionDetailView extends VerticalLayout{
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				//setDataForView(details);
-				//rideDetails.removeAllColumns();
-				//rideDetails=new Grid();
-				//instantiateGrid();
-				//setDataForView(details);
-				McsaSolution updated=null;
-				try {
-					updated =McsaSolutionDAO.bookRide(userid, tranid, solid);
-				} catch (ClientHandlerException | UniformInterfaceException | DaoException | IOException e) {
-					Notification error = new Notification("Error", e.getMessage(), Type.ERROR_MESSAGE);
-					error.show(UI.getCurrent().getPage());
-					e.printStackTrace();
-				}
-				LinkedList<McsaSegment> updatedSol = updated.getSolution();
-				setDataForView(updatedSol);
-				/*rows=new LinkedList<SolDetGridRow>();
-				SolDetGridRow portanna = new SolDetGridRow("dio", "cane", "maledetto", "rotto", "in culo");
-				rows.add(portanna);
-				setGrid();
-				System.out.println("Portanna");*/
+				if(!booked)
+				{
+					//bookButton.removeStyleName(ValoTheme.BUTTON_DANGER);
+					//bookButton.setCaption(BvStringUtils.bvColorizeString("Book this ride!!"));
+					//bookButton.markAsDirty();
+					McsaSolution updated=null;
+					try {
+						updated =McsaSolutionDAO.bookRide(userid, tranid, solid);
+					} catch (ClientHandlerException | UniformInterfaceException | DaoException | IOException e) {
+						Notification error = new Notification("Error", e.getMessage(), Type.ERROR_MESSAGE);
+						error.show(UI.getCurrent().getPage());
+						e.printStackTrace();
+					}
+					LinkedList<McsaSegment> updatedSol = updated.getSolution();
+					setDataForView(updatedSol);
+					booked=true;
+					bookButton.setCaption("Cancel reservation");
+					bookButton.addStyleName(ValoTheme.BUTTON_DANGER);
+					bookButton.markAsDirty();
+				}else
+					{
+					String serverMessage=null;
+					 try {
+						  serverMessage=McsaSolutionDAO.deleteReservation(userid, tranid);
+						 // bookButton.removeStyleName(ValoTheme.BUTTON_DANGER);
+						 // bookButton.setCaption(BvStringUtils.bvColorizeString("Book this ride!!"));
+						 // bookButton.markAsDirty();
+						 // booked=false;
+						  Notification success = new Notification("Success",serverMessage,Type.ASSISTIVE_NOTIFICATION);
+						  success.setDelayMsec(3500);
+						  success.setPosition(Position.TOP_RIGHT);
+						  success.show(UI.getCurrent().getPage());
+						  if(parent!=null)parent.close();
+						  System.out.println("is parentview null "+parentView==null);
+						  if(parentView!=null)parentView.updateTransfersView();
+						 // setDataForView(details);
+						 } catch (ClientHandlerException | UniformInterfaceException | DaoException e) {
+								Notification error = new Notification("Error",serverMessage,Type.ERROR_MESSAGE);
+								error.show(UI.getCurrent().getPage());
+							} catch (JsonParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (JsonMappingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 			}
 		});
 		}
@@ -173,6 +235,7 @@ public class SolutionDetailView extends VerticalLayout{
 				 map.removePolyline(politer.next());
 			 	}
 		 	}
+		 if(rows.size()!=0) rows = new LinkedList<SolDetGridRow>();
 		 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		 SimpleDateFormat daySdf = new SimpleDateFormat("EEEE, dd/MM/yyyy");
 		 Iterator<McsaSegment> iter = segList.iterator();
@@ -262,7 +325,7 @@ public class SolutionDetailView extends VerticalLayout{
 		 rideDetails.getColumn("segDuration").setRenderer(new HtmlRenderer());
 		 rideDetails.getColumn("segLenString").setRenderer(new HtmlRenderer());
 		 rideDetails.setColumnOrder("waitString","depString","arrString","segDuration","segLenString");
-		 //rideDetails.markAsDirty();
+		 rideDetails.markAsDirty();
 		 rightContent.addComponent(rideDetails, 2);
 		 rightContent.setComponentAlignment(rideDetails, Alignment.TOP_CENTER);
 		 rightContent.setExpandRatio(rideDetails, 1);

@@ -27,19 +27,19 @@ public static String bvColorizeWord(String input)
 					if(color==0)
 						{
 						result=result+blueTag+split[i].substring(position, position+1)+closeTag;
-						System.out.println("caso1");
+						//System.out.println("caso1");
 						//color++;
 						}
 					if(color==1)
 						{
 						result=result+greenTag+split[i].substring(position, position+1)+closeTag;
-						System.out.println("caso2");
+						//System.out.println("caso2");
 						//color++;
 						}
 					if(color==2)
 						{
 						result=result+redTag+split[i].substring(position, position+1)+closeTag;
-						System.out.println("caso3");
+						//System.out.println("caso3");
 						//color++;
 						}
 					color++;
@@ -58,7 +58,7 @@ public static String bvColorizeWord(String input)
 				}
 		result=result+" ";
 		}
-	System.out.println(result);
+	//System.out.println(result);
 	return result;
 	}
 public static String bvColorizeString(String input)
@@ -76,19 +76,19 @@ public static String bvColorizeString(String input)
 				if(color==0)
 					{
 					result=result+blueTag+input .substring(position, position+1)+closeTag;
-					System.out.println("caso1");
+					//System.out.println("caso1");
 					//color++;
 					}
 				if(color==1)
 					{
 					result=result+greenTag+input.substring(position, position+1)+closeTag;
-					System.out.println("caso2");
+					//System.out.println("caso2");
 					//color++;
 					}
 				if(color==2)
 					{
 					result=result+redTag+input.substring(position, position+1)+closeTag;
-					System.out.println("caso3");
+					//System.out.println("caso3");
 					//color++;
 					}
 				color++;

@@ -46,13 +46,14 @@ public class TransferView extends VerticalLayout{
 	private double rndlngMax;
 	private double rndlatMin;
 	private double rndlngMin;
-	
-	public TransferView(Transfer tran)
+	private WelcomeView parentView;
+	public TransferView(WelcomeView parentView,Transfer tran)
 		{
 		 this.setWidth("100%");
 		 this.setHeight("500px");
 		 this.setImmediate(true);
 		 this.setResponsive(true);
+		 this.parentView=parentView;
 		 contentPanel.setSplitPosition(65, Unit.PERCENTAGE);
 		 
 		 map = new GoogleMap("AIzaSyBA-NgbRwnecHN3cApbnZoaCZH0ld66fT4", null, "english");
@@ -179,26 +180,27 @@ public class TransferView extends VerticalLayout{
 				subWindow.setWidth("800px");
 				subWindow.setHeight("600px");
 				subWindow.setModal(true);
-				subWindow.setContent(new SolutionView(results,tran.getUser_id(),tran.getTran_id()));
+				subWindow.setContent(new SolutionView(parentView,subWindow,results,tran.getUser_id(),tran.getTran_id()));
 				UI.getCurrent().addWindow(subWindow);
 				
 			}
 		});
 		 fixMap.setCaptionAsHtml(true);
 		 fixMap.setCaption(BvStringUtils.bvColorizeString("Center Map"));
-		 fixMap.addClickListener(new Button.ClickListener() {
-			
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -9024891871815325038L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				fitMap();
+		 Button.ClickListener listener = new Button.ClickListener() {
 				
-			}
-		});
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -9024891871815325038L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					fitMap();
+					
+				}
+			};
+		 fixMap.addClickListener(listener);
 		 depLabel.setValue(tran.getDep_addr());
 		 depLabel.setCaptionAsHtml(true);
 		 depLabel.setCaption(BvStringUtils.bvColorizeWord("Your departure address:"));
@@ -215,7 +217,8 @@ public class TransferView extends VerticalLayout{
 		 contentPanel.setFirstComponent(leftSide);
 		 contentPanel.setSecondComponent(rightSide);
 		 this.addComponent(contentPanel);
-		 
+		 listener.buttonClick(new ClickEvent(fixMap));
+		 map.markAsDirty();
 		 
 		}
 	public void fitMap()
