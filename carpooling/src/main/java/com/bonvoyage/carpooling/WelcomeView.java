@@ -17,6 +17,7 @@ import org.vaadin.teemu.wizards.Wizard;
 
 import com.bonvoyage.designs.Landpage;
 import com.bonvoyage.domain.McsaSolution;
+import com.bonvoyage.domain.Pool;
 import com.bonvoyage.domain.Transfer;
 import com.bonvoyage.domain.UserProfile;
 import com.bonvoyage.offerwizard.FirstStep;
@@ -24,6 +25,7 @@ import com.bonvoyage.offerwizard.FourthStep;
 import com.bonvoyage.offerwizard.SecondStep;
 import com.bonvoyage.offerwizard.ThirdStep;
 import com.bonvoyage.persistance.McsaSolutionDAO;
+import com.bonvoyage.persistance.PoolDAO;
 import com.bonvoyage.persistance.TransferDAO;
 import com.bonvoyage.persistance.UserDAO;
 import com.bonvoyage.searchwizard.searchFirstStep;
@@ -149,7 +151,12 @@ public WelcomeView(CarpoolingUI ui) throws JsonParseException, JsonMappingExcept
 			
 		}});
 
-	updateTransfersView();
+	try {
+		updateTransfersView();
+	} catch (DaoException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
 	
 	///////////////////////////////////////////////
 	
@@ -212,6 +219,9 @@ public WelcomeView(CarpoolingUI ui) throws JsonParseException, JsonMappingExcept
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (DaoException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -278,6 +288,9 @@ public WelcomeView(CarpoolingUI ui) throws JsonParseException, JsonMappingExcept
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (DaoException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -436,7 +449,7 @@ public void setHistoryTable(Table tab)
 	 super.userHistory=tab;
 	}
 
-public void updateTransfersView() throws JsonParseException, JsonMappingException, IOException
+public void updateTransfersView() throws JsonParseException, JsonMappingException, IOException, DaoException
 	{
 	driverContent.removeAllComponents();
 	passengerContent.removeAllComponents();
@@ -470,7 +483,8 @@ public void updateTransfersView() throws JsonParseException, JsonMappingExceptio
 		 if(tran.getUser_role().equals("driver"))
 		 	{
 			 String tabTitle ="TRIP FROM: "+tran.getDep_addr()+" TO: "+tran.getArr_addr()+" AVAILABLE SEATS:"+tran.getOcc_seats()+"/"+tran.getAva_seats();
-			 TransferView toAdd = new TransferView(this,tran);
+			 Pool driverPool = PoolDAO.getPool(tran.getUser_id(), tran.getTran_id());
+			 TransferView toAdd = new TransferView(this,tran,driverPool);
 			 toAdd.setImmediate(true);
 			 driverContent.addTab(toAdd, tabTitle);
 			 //toAdd.fitMap();

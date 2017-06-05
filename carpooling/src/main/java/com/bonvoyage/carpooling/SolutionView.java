@@ -11,6 +11,7 @@ import java.util.Locale;
 
 import com.bonvoyage.domain.McsaSegment;
 import com.bonvoyage.domain.McsaSolution;
+import com.bonvoyage.utils.DaoException;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
@@ -113,6 +114,9 @@ public class SolutionView extends VerticalLayout {
 						try {
 							parentView.updateTransfersView();
 						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (DaoException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
