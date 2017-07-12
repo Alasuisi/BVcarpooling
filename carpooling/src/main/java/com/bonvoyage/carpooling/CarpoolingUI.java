@@ -73,7 +73,7 @@ public class CarpoolingUI extends UI {
 		            // Use shared session data
 		            response.getWriter().format("Session data: %s\n",
 		                session.getAttribute("mydata"));
-		            System.out.println("Portanna");
+		            System.out.println("test");
 		            return true; // We wrote a response
 		        } else
 		            return false; // No response was written
@@ -122,7 +122,7 @@ public class CarpoolingUI extends UI {
 				
 				try {
 					loggedUser = UserDAO.load(Integer.parseInt(key));
-					System.out.println("sto cazzo de user"+loggedUser.toString());
+					System.out.println("logged user: "+loggedUser.toString());
 					//test.setUserName(new Integer(loggedUser.getUserID()).toString());
 					UI.getCurrent().getSession().setAttribute(UserProfile.class, loggedUser);
 				} catch (DaoException e) {

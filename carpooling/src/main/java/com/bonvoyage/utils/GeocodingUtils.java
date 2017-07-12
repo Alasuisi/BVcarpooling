@@ -77,8 +77,8 @@ public class GeocodingUtils {
 		    DistanceMatrix distanceMatrix=DistanceMatrixApi.newRequest(geoApiContext).origins(origin).destinations(destination).await();
 		    if (distanceMatrix.rows.length == 0 || distanceMatrix.rows[0].elements.length == 0)     throw new RuntimeException("No distance and duration found.");
 		    //return new RouteDistanceDuration(distanceMatrix.rows[0].elements[0].distance.inMeters,distanceMatrix.rows[0].elements[0].duration.inSeconds);
-		    System.out.println("Portanna 1 "+distanceMatrix.rows[0].elements[0].distance.inMeters);
-		    System.out.println("Portanna 2 "+distanceMatrix.rows[0].elements[0].duration.inSeconds);
+		    System.out.println("distance in meters "+distanceMatrix.rows[0].elements[0].distance.inMeters);
+		    System.out.println("distance in seconds"+distanceMatrix.rows[0].elements[0].duration.inSeconds);
 		  }
 		 catch (  Exception e) {
 		    e.printStackTrace();

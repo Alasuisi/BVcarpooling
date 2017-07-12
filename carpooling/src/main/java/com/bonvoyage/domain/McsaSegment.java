@@ -232,7 +232,7 @@ public class McsaSegment implements Serializable{
 	 double meanSpeed = 1.39;
 	 double timeSeconds = distance/meanSpeed;
 	 double millitime =timeSeconds*1000;
-	 if(millitime<0) System.err.println("che e'successo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!?"+distance);
+	 if(millitime<0) System.err.println("Bad distance"+distance);
 	 return Math.round(millitime);
 	}
 	

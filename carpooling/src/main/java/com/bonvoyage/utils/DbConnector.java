@@ -71,7 +71,7 @@ public class DbConnector {
 	  {
 	    try
 	    {
-	    	System.out.println("ma che cazz? "+UI.getCurrent().getSession().getAttribute("tunnel"));
+	    	System.out.println("tunnel status: "+UI.getCurrent().getSession().getAttribute("tunnel"));
 	    	String tunnelUP=(String) UI.getCurrent().getSession().getAttribute("tunnel");
 	    	if(tunnelUP==null) tunnelUP="false";
 	    	if(!tunnelUP.equals("true"))

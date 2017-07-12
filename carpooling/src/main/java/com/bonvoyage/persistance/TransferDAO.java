@@ -141,7 +141,7 @@ public class TransferDAO implements Serializable{
 			DbConnector manager = new DbConnector();
 			con = manager.connect();
 			pstm=con.prepareStatement(READ_MY_OFFERINGS);
-			System.out.println("DIOCANEEEE "+user.getUserID());
+			System.out.println("userid "+user.getUserID());
 			pstm.setInt(1, user.getUserID());
 			//pstm.setInt(1, 89);
 			rs=pstm.executeQuery();
