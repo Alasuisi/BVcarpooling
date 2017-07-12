@@ -1,5 +1,6 @@
 package com.bonvoyage.carpooling;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -50,7 +51,6 @@ public class CarpoolingUI extends UI {
 
 	@Override
     protected void init(VaadinRequest vaadinRequest) {
-		
     	
     	VaadinSession.getCurrent().addRequestHandler(new RequestHandler(){
 
@@ -58,7 +58,7 @@ public class CarpoolingUI extends UI {
 			 * 
 			 */
 			private static final long serialVersionUID = 5882813902895784983L;
-
+			
 			@Override
 			public boolean handleRequest(VaadinSession session, VaadinRequest request, VaadinResponse response)
 					throws IOException {
@@ -78,7 +78,8 @@ public class CarpoolingUI extends UI {
 		        } else
 		            return false; // No response was written
 			}});
-    	
+    	String message =vaadinRequest.getParameter("message");
+    	if(message!=null)System.out.println(message);
     	setUser(vaadinRequest.getParameter("key"));
         final VerticalLayout layout = new VerticalLayout();
         

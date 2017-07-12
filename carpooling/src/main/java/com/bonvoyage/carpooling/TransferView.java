@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.bonvoyage.domain.McsaSolution;
+import com.bonvoyage.domain.Passenger;
+import com.bonvoyage.domain.Pool;
 import com.bonvoyage.domain.TimedPoint2D;
 import com.bonvoyage.domain.Transfer;
 import com.bonvoyage.persistance.McsaSolutionDAO;
@@ -16,6 +18,7 @@ import com.bonvoyage.utils.DaoException;
 import com.google.maps.model.LatLng;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.UniformInterfaceException;
+import com.vaadin.shared.Position;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
@@ -24,9 +27,12 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 
@@ -36,7 +42,7 @@ public class TransferView extends VerticalLayout{
 	private Label arrLabel = new Label();
 	private Label timeLabel = new Label();
 	private Button fixMap = new Button();
-	private Button searchSolutionBtn = new Button();
+	private Button actionButton = new Button();
 	private GoogleMap map = null;
 	
 	private HorizontalSplitPanel contentPanel = new HorizontalSplitPanel();
@@ -46,14 +52,62 @@ public class TransferView extends VerticalLayout{
 	private double rndlngMax;
 	private double rndlatMin;
 	private double rndlngMin;
+	private Transfer tran;
+
 	private WelcomeView parentView;
+	
+	public TransferView(WelcomeView parentView,Transfer tran,Pool pool)
+		{
+		 
+		 setData(parentView,tran);
+		 LinkedList<Passenger> passList = pool.getPassengerList();
+		 Iterator<Passenger> iter = passList.iterator();
+		 int count=1;
+		 while(iter.hasNext())
+		 	{
+			 Passenger pass = iter.next();
+			 TimedPoint2D boarding = pass.getBoardingPoint();
+			 TimedPoint2D getoff = pass.getGetofPoint();
+			 LatLon boardingLatLon = new LatLon(boarding.getLatitude(),boarding.getLongitude());
+			 LatLon getoffLatLon = new LatLon(getoff.getLatitude(),getoff.getLongitude());
+			 Date boardDate = new Date(boarding.getTouchTime());
+			 Date getOffDate = new Date(getoff.getTouchTime());
+			 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+			 String boardString = sdf.format(boardDate);
+			 String getOffString = sdf.format(getOffDate);
+			 GoogleMapMarker markon = new GoogleMapMarker();
+			 markon.setAnimationEnabled(true);
+			 markon.setDraggable(false);
+			 markon.setPosition(boardingLatLon);
+			 markon.setCaption("boarding passenger "+count+" at "+boardString);
+			 map.addMarker(markon);
+			 GoogleMapMarker markoff = new GoogleMapMarker();
+			 markoff.setAnimationEnabled(true);
+			 markoff.setDraggable(false);
+			 markoff.setPosition(getoffLatLon);
+			 markoff.setCaption("leaving passenger "+count+" at "+getOffString);
+			 map.addMarker(markoff);
+			 map.markAsDirty();
+			 System.out.println(markon.getCaption()+System.lineSeparator()+markoff.getCaption());
+			 count++;
+		 	}
+		 setActionButtonCancel();
+		}
+	
 	public TransferView(WelcomeView parentView,Transfer tran)
+		{
+		 setData(parentView,tran);
+		 setActionButtonSearch();
+		}
+	
+	public void setData(WelcomeView parentView,Transfer tran)
 		{
 		 this.setWidth("100%");
 		 this.setHeight("500px");
 		 this.setImmediate(true);
 		 this.setResponsive(true);
 		 this.parentView=parentView;
+		 this.tran=tran;
 		 contentPanel.setSplitPosition(65, Unit.PERCENTAGE);
 		 
 		 map = new GoogleMap("AIzaSyBA-NgbRwnecHN3cApbnZoaCZH0ld66fT4", null, "english");
@@ -131,16 +185,75 @@ public class TransferView extends VerticalLayout{
 		 leftSide.setComponentAlignment(mapTitleLabel, Alignment.TOP_LEFT);
 		 leftSide.setComponentAlignment(map, Alignment.TOP_LEFT);
 		 leftSide.setExpandRatio(map, 1);
-		 rightSide.addComponents(depLabel,arrLabel,timeLabel,fixMap,searchSolutionBtn);
+		 rightSide.addComponents(depLabel,arrLabel,timeLabel,fixMap,actionButton);
 		 rightSide.setMargin(true);
 		 rightSide.setExpandRatio(timeLabel, 1);
 		 rightSide.setComponentAlignment(fixMap, Alignment.TOP_CENTER);
-		 rightSide.setComponentAlignment(searchSolutionBtn, Alignment.TOP_CENTER);
+		 rightSide.setComponentAlignment(actionButton, Alignment.TOP_CENTER);
 		 rightSide.setSpacing(true);
 		 
-		 searchSolutionBtn.setCaptionAsHtml(true);
-		 searchSolutionBtn.setCaption(BvStringUtils.bvColorizeString("Look for solutions"));
-		 searchSolutionBtn.addClickListener(new Button.ClickListener() {
+		 
+		 fixMap.setCaptionAsHtml(true);
+		 fixMap.setCaption(BvStringUtils.bvColorizeString("Center Map"));
+		 Button.ClickListener listener = new Button.ClickListener() {
+				
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -9024891871815325038L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					fitMap();
+					
+				}
+			};
+		 fixMap.addClickListener(listener);
+		 depLabel.setValue(tran.getDep_addr());
+		 depLabel.setCaptionAsHtml(true);
+		 depLabel.setCaption(BvStringUtils.bvColorizeWord("Your departure address:"));
+		 arrLabel.setValue(tran.getArr_addr());
+		 arrLabel.setCaptionAsHtml(true);
+		 arrLabel.setCaption(BvStringUtils.bvColorizeWord("Your arrival address:"));
+		 Date departure = new Date(tran.getDep_time());
+		 SimpleDateFormat sdf = new SimpleDateFormat();
+		 sdf.applyPattern("dd-MM-yy HH.mm");
+		 String depString = sdf.format(departure);
+		 timeLabel.setValue(depString);
+		 timeLabel.setCaptionAsHtml(true);
+		 timeLabel.setCaption(BvStringUtils.bvColorizeWord("Your departure time:"));
+		 contentPanel.setFirstComponent(leftSide);
+		 contentPanel.setSecondComponent(rightSide);
+		 this.addComponent(contentPanel);
+		 listener.buttonClick(new ClickEvent(fixMap));
+		 map.markAsDirty();
+		 
+		}
+	private void setActionButtonCancel()
+		{
+		actionButton.addStyleName(ValoTheme.BUTTON_DANGER);
+		actionButton.setCaption("Cancel this ride offering");
+		actionButton.addClickListener(new Button.ClickListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 3895341754433656924L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				Notification notice = new Notification("Developer","This action is not coded yet",Type.WARNING_MESSAGE);
+				notice.setPosition(Position.MIDDLE_CENTER);
+				notice.show(UI.getCurrent().getPage());
+				
+			}
+		});
+		}
+	private void setActionButtonSearch()
+		{
+		actionButton.setCaptionAsHtml(true);
+		 actionButton.setCaption(BvStringUtils.bvColorizeString("Look for solutions"));
+		 actionButton.addClickListener(new Button.ClickListener() {
 			
 			/**
 			 * 
@@ -185,42 +298,8 @@ public class TransferView extends VerticalLayout{
 				
 			}
 		});
-		 fixMap.setCaptionAsHtml(true);
-		 fixMap.setCaption(BvStringUtils.bvColorizeString("Center Map"));
-		 Button.ClickListener listener = new Button.ClickListener() {
-				
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = -9024891871815325038L;
-
-				@Override
-				public void buttonClick(ClickEvent event) {
-					fitMap();
-					
-				}
-			};
-		 fixMap.addClickListener(listener);
-		 depLabel.setValue(tran.getDep_addr());
-		 depLabel.setCaptionAsHtml(true);
-		 depLabel.setCaption(BvStringUtils.bvColorizeWord("Your departure address:"));
-		 arrLabel.setValue(tran.getArr_addr());
-		 arrLabel.setCaptionAsHtml(true);
-		 arrLabel.setCaption(BvStringUtils.bvColorizeWord("Your arrival address:"));
-		 Date departure = new Date(tran.getDep_time());
-		 SimpleDateFormat sdf = new SimpleDateFormat();
-		 sdf.applyPattern("dd-MM-yy HH.mm");
-		 String depString = sdf.format(departure);
-		 timeLabel.setValue(depString);
-		 timeLabel.setCaptionAsHtml(true);
-		 timeLabel.setCaption(BvStringUtils.bvColorizeWord("Your departure time:"));
-		 contentPanel.setFirstComponent(leftSide);
-		 contentPanel.setSecondComponent(rightSide);
-		 this.addComponent(contentPanel);
-		 listener.buttonClick(new ClickEvent(fixMap));
-		 map.markAsDirty();
-		 
 		}
+	
 	public void fitMap()
 		{
 		map.fitToBounds(new LatLon(rndlatMax,rndlngMax), new LatLon(rndlatMin,rndlngMin));
